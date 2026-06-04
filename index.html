@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Control Inspection - PT Murinda Sentra Baja</title>
+    <style>
+        /* Import Font yang Santai, Clean, dan Sangat Elegan */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+        
+        :root {
+            /* Tema Warna Mewah & Transparan Ala Gemini (Tosca, Green, Orange) */
+            --primary-color: #0d9488; /* Tosca / Teal */
+            --accent-color: #f97316;  /* Glowing Orange */
+            --success-color: #10b981; /* Emerald Green */
+            --gemini-blue: #3b82f6;   /* Soft Blue */
+            --bg-color: #f8fafc;
+            --text-dark: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --shadow: rgba(13, 148, 136, 0.08);
+            --transition-speed: 0.35s;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            background-color: var(--bg-color);
+            /* Background Aura Gemini (Tosca, Oranye, Hijau) */
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(13, 148, 136, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 30%, rgba(249, 115, 22, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header Area */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(13, 148, 136, 0.15);
+        }
+
+        .brand-section h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin: 0;
+            /* Gradasi Teks Judul ala Gemini */
+            background: linear-gradient(135deg, var(--primary-color), var(--gemini-blue), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        /* Info Widget: Timer & Sync Status */
+        .info-widgets {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .live-clock {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #475569;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 8px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-animation 1.6s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Action Buttons Area */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, var(--primary-color), #0f766e);
+            color: white;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #0f172a, #334155);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(13, 148, 136, 0.25);
+            opacity: 0.95;
+        }
+
+        /* Glassmorphism Containers */
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 10px 30px 0 var(--shadow);
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Hover Mewah & Transparan Untuk Grid Utama */
+        .glass-container:hover {
+            border-color: rgba(13, 148, 136, 0.35);
+            box-shadow: 0 15px 40px rgba(13, 148, 136, 0.1), 0 10px 20px rgba(249, 115, 22, 0.05);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+        }
+
+        /* Search Box Khusus */
+        .search-group {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        @media (max-width: 768px) {
+            .search-group { grid-column: span 1; }
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select, input[type="text"] {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid #e2e8f0;
+            color: var(--text-dark);
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        select:focus, select:hover, input[type="text"]:focus, input[type="text"]:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.12);
+            background: #ffffff;
+        }
+
+        /* Summary Panel Section */
+        .summary-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+            min-width: 115px;
+            flex: 1;
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
+        .summary-card.total { background: #f8fafc; border-color: #cbd5e1; }
+        .summary-card.defect { background: #ffffff; border-color: #f1f5f9; }
+
+        /* Hover Mewah Transparan pada Summary Card */
+        .summary-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 1));
+            border-color: var(--primary-color);
+            box-shadow: 0 12px 25px rgba(13, 148, 136, 0.15), 0 0 15px rgba(249, 115, 22, 0.05);
+        }
+
+        .summary-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        
+        .summary-card.defect .summary-title { color: #475569; }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .summary-card.defect .summary-value { color: #334155; }
+        .summary-card:hover .summary-value {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Table Wrapper & Frozen Mechanics */
+        .table-wrapper {
+            max-height: 52vh;
+            overflow-y: auto;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            position: relative;
+        }
+
+        /* Scrollbar Styling */
+        .table-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .table-wrapper::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .table-wrapper::-webkit-scrollbar-track { background: #f1f5f9; }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #334155;
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 13px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #334155;
+            transition: all 0.25s ease;
+        }
+
+        /* PROSES BEKUKAN HORIZONTAL (Serial Number s/d Periode) */
+        th:nth-child(1), td:nth-child(1) { position: sticky; left: 0; z-index: 6; min-width: 140px; max-width: 140px; }
+        th:nth-child(2), td:nth-child(2) { position: sticky; left: 140px; z-index: 6; min-width: 100px; max-width: 100px; }
+        th:nth-child(3), td:nth-child(3) { position: sticky; left: 240px; z-index: 6; min-width: 110px; max-width: 110px; }
+        th:nth-child(4), td:nth-child(4) { position: sticky; left: 350px; z-index: 6; min-width: 150px; max-width: 150px; }
+        th:nth-child(5), td:nth-child(5) { 
+            position: sticky; 
+            left: 500px; 
+            z-index: 6; 
+            min-width: 120px; 
+            max-width: 120px;
+            /* Garis pembatas elegan penanda area freeze (Warna Tosca Soft) */
+            border-right: 2px solid rgba(13, 148, 136, 0.25) !important; 
+        }
+
+        /* Menjaga z-index header beku agar tidak tabrakan saat guling vertikal */
+        th:nth-child(-n+5) { z-index: 12; background: #f0fdfa !important; color: var(--primary-color); }
+
+        /* Mengunci background kolom beku agar data gulung belakangnya tidak transparan bayang */
+        tr:nth-child(odd) td:nth-child(-n+5) { background: #ffffff; }
+        tr:nth-child(even) td:nth-child(-n+5) { background: #f8fafc; }
+
+        /* EFEK HOVER DATA TABEL YANG BARU (Soft, Clean, Elegan - Tidak Aneh) */
+        tr:hover td { 
+            /* Gradasi super lembut Tosca ke Oranye */
+            background: linear-gradient(90deg, rgba(13, 148, 136, 0.08), rgba(249, 115, 22, 0.04)) !important;
+            color: #0f172a;
+            font-weight: 600;
+            transform: scale(1.001);
+            /* Border atas dan bawah menyala tipis warna Tosca */
+            box-shadow: inset 0 1px 0 rgba(13, 148, 136, 0.2), inset 0 -1px 0 rgba(13, 148, 136, 0.2);
+        }
+        
+        /* Baris beku tetap mempertahankan keselarasan warna background hover */
+        tr:hover td:nth-child(-n+5) { 
+            background: linear-gradient(90deg, #f0fdfa, #fff7ed) !important; 
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 25px 0 10px 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            padding: 50px;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        .status-pass { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; } /* Hijau Soft */
+        .status-defect { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-none { background: #f1f5f9; color: #94a3b8; }
+
+        /* ==================== CONFIG PRINT MEDIA AUTOMATIC ==================== */
+        .print-only-header { display: none; }
+        @media print {
+            body { background: #ffffff !important; background-image: none !important; padding: 0 !important; color: #000000 !important; }
+            .header-container, .glass-container:nth-of-type(1), .summary-panel, .action-buttons, footer, #loading {
+                display: none !important;
+            }
+            .glass-container { border: none !important; box-shadow: none !important; padding: 0 !important; background: transparent !important; }
+            .print-only-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 25px;
+                border-bottom: 3px double #000000;
+                padding-bottom: 10px;
+            }
+            .print-only-header h2 { margin: 0; font-size: 1.8rem; font-family: 'Poppins', sans-serif; }
+            .print-only-header p { margin: 5px 0 0 0; font-size: 0.9rem; color: #333; }
+            .table-wrapper { max-height: none !important; overflow: visible !important; border: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; }
+            th, td { 
+                position: static !important; /* Lepas sistem pembekuan agar tercetak semua kolom */
+                background: transparent !important; 
+                color: #000000 !important; 
+                border: 1px solid #94a3b8 !important; 
+                padding: 6px 8px !important; 
+                font-size: 9pt !important;
+                white-space: normal !important; 
+            }
+            th { background-color: #f1f5f9 !important; font-weight: bold !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-only-header">
+        <h2>Quality Control Inspection</h2>
+        <h2>PT MURINDA SENTRA BAJA</h2>
+        <p id="print-timestamp"></p>
+    </div>
+
+    <div class="header-container">
+        <div class="brand-section">
+            <h1>Quality Control Inspection</h1>
+        </div>
+        <div class="info-widgets">
+            <div class="live-clock" id="live-timer">Memuat Waktu...</div>
+            <div class="sync-status">
+                <span class="pulse-dot"></span>MSB System Online
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-refresh" onclick="fetchData()">🍃 Refresh</button>
+                <button class="btn btn-print" onclick="triggerPrint()">🖨️ Cetak</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-container">
+        <div class="filters-grid">
+            <div class="search-group">
+                <label>Pencarian Kata Kunci</label>
+                <input type="text" id="search-input" placeholder="Ketik apa saja untuk cari data (Contoh: SN, Client, Unit)..." oninput="applyFilters()">
+            </div>
+            <div class="filter-group">
+                <label>Client</label>
+                <select id="filter-client"><option value="All">All Clients</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Unit</label>
+                <select id="filter-unit"><option value="All">All Units</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Periode</label>
+                <select id="filter-periode">
+                    <option value="All">All Periode</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Proses</label>
+                <select id="filter-process">
+                    <option value="All">All Processes</option>
+                    <option value="Assembly">Assembly</option>
+                    <option value="Welding">Welding</option>
+                    <option value="Leak Test">Leak Test</option>
+                    <option value="Filling">Filling</option>
+                    <option value="Alignment">Alignment</option>
+                    <option value="Covering">Covering</option>
+                    <option value="Painting">Painting</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-container">
+        <div class="summary-panel" id="summary-panel" style="display: none;">
+            <div class="summary-card total">
+                <div class="summary-title">Total Filtered</div>
+                <div class="summary-value" id="sum-total">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Assy Defect</div>
+                <div class="summary-value" id="sum-assy">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Weld Defect</div>
+                <div class="summary-value" id="sum-weld">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Leak Defect</div>
+                <div class="summary-value" id="sum-leak">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Fill Defect</div>
+                <div class="summary-value" id="sum-fill">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Align Defect</div>
+                <div class="summary-value" id="sum-align">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Cover Defect</div>
+                <div class="summary-value" id="sum-cover">0</div>
+            </div>
+            <div class="summary-card defect">
+                <div class="summary-title">Paint Defect</div>
+                <div class="summary-value" id="sum-paint">0</div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">Menyiapkan data dari Sistem ERP MSB...</div>
+        
+        <div class="table-wrapper" id="table-container" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Serial Number</th><th>Unit</th><th>Unit Number</th><th>Client</th><th>Periode</th>
+                        <th>Assembly</th><th>Date Assy</th><th>Assy Defect</th>
+                        <th>Welding</th><th>Date Weld</th><th>Welding Defect</th>
+                        <th>Leak Test</th><th>Date Leak Test</th><th>Leak Test Defect</th>
+                        <th>Filling</th><th>Date Filling</th><th>Filling Defect</th>
+                        <th>Alignment</th><th>Date Alignment</th><th>Alignment Defect</th>
+                        <th>Covering</th><th>Date Covering</th><th>Cover Defect</th>
+                        <th>Painting</th><th>Date Painting</th><th>Painting Defect</th>
+                        <th>Production Total</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        PT MURINDA SENTRA BAJA &copy; 2026<br>
+        <span style="font-size: 0.8rem; font-weight: 600; color: #cbd5e1;">Quality Control PT Murinda Sentra Baja</span>
+    </footer>
+
+    <script>
+        // Endpoint Google Apps Script Anda
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7xje4AJdwJ0O2X52IYmpOSybx-J6XceZ-Kre7BeLzQcSsGjw-0-8D565-xfwq27lAYQ/exec"; 
+
+        let rawData = [];
+        const requestedColumns = [
+            "Serial Number", "Unit", "Unit Number", "Client", "Periode", 
+            "Assembly", "Date Assy", "Assy Defect", "Welding", "Date Weld", "Welding Defect", 
+            "Leak Test", "Date Leak Test", "Leak Test Defect", "Filling", "Date Filling", "Filling Defect", 
+            "Alignment", "Date Alignment", "Alignment Defect", "Covering", "Date Covering", "Cover Defect", 
+            "Painting", "Date Painting", "Painting Defect", "Production Total"
+        ];
+
+        // LOGIKA TIMER BERJALAN LIVE
+        function runLiveClock() {
+            const now = new Date();
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const dayName = days[now.getDay()];
+            const day = String(now.getDate()).padStart(2, '0');
+            const monthName = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const formattedTime = `${dayName}, ${day} ${monthName} ${year} | ${hours}:${minutes}:${seconds}`;
+            document.getElementById('live-timer').innerText = formattedTime;
+        }
+        setInterval(runLiveClock, 1000);
+        runLiveClock();
+
+        // FUNGSI PRINT TRIGGER
+        function triggerPrint() {
+            const now = new Date();
+            document.getElementById('print-timestamp').innerText = "Dicetak Otomatis pada: " + now.toLocaleString('id-ID') + " WIB";
+            window.print();
+        }
+
+        async function fetchData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').innerText = "Mengambil data MSB ERP System...";
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                parseData(data);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('loading').innerText = "KONEKSI KE MSB ERP SYSTEM GAGAL / TIMEOUT.";
+            }
+        }
+
+        function parseData(data) {
+            const headers = data.headers;
+            rawData = data.rows;
+
+            requestedColumns.forEach((reqCol) => {
+                let actualKey = headers.find(h => h.toLowerCase() === reqCol.toLowerCase()) || 
+                                headers.find(h => h.toLowerCase().includes(reqCol.toLowerCase())) || 
+                                reqCol;
+                rawData.forEach(row => {
+                    if (actualKey !== reqCol && row[actualKey] !== undefined) {
+                        row[reqCol] = row[actualKey];
+                    }
+                });
+            });
+
+            populateFilters();
+            applyFilters();
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('summary-panel').style.display = 'flex';
+            document.getElementById('table-container').style.display = 'block';
+        }
+
+        function populateFilters() {
+            const clientSelect = document.getElementById('filter-client');
+            const unitSelect = document.getElementById('filter-unit');
+            const periodeSelect = document.getElementById('filter-periode');
+            
+            const currentClient = clientSelect.value;
+            const currentUnit = unitSelect.value;
+            const currentPeriode = periodeSelect.value;
+
+            const clients = new Set();
+            rawData.forEach(row => { if(row["Client"]) clients.add(row["Client"]); });
+            
+            while (clientSelect.options.length > 1) { clientSelect.remove(1); }
+            Array.from(clients).sort().forEach(val => {
+                const option = document.createElement('option');
+                option.value = val; option.text = val;
+                if (val === currentClient) option.selected = true;
+                clientSelect.appendChild(option);
+            });
+
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            while (periodeSelect.options.length > 1) { periodeSelect.remove(1); }
+            months.forEach(val => {
+                const option = document.createElement('option');
+                option.value = val; option.text = val;
+                if (val === currentPeriode) option.selected = true;
+                periodeSelect.appendChild(option);
+            });
+
+            updateUnits(currentClient, currentUnit);
+        }
+        
+        function updateUnits(selectedClient, selectedUnit) {
+            const unitSelect = document.getElementById('filter-unit');
+            while (unitSelect.options.length > 1) { unitSelect.remove(1); }
+            const availableUnits = new Set();
+            rawData.forEach(row => {
+                if (selectedClient === 'All' || row["Client"] == selectedClient) {
+                    if (row["Unit"]) availableUnits.add(row["Unit"]);
+                }
+            });
+            Array.from(availableUnits).sort().forEach(val => {
+                const option = document.createElement('option');
+                option.value = val; option.text = val;
+                if (val === selectedUnit) option.selected = true;
+                unitSelect.appendChild(option);
+            });
+        }
+
+        document.getElementById('filter-client').addEventListener('change', function() {
+            updateUnits(this.value, 'All');
+            applyFilters();
+        });
+        document.getElementById('filter-unit').addEventListener('change', applyFilters);
+        document.getElementById('filter-periode').addEventListener('change', applyFilters);
+        document.getElementById('filter-process').addEventListener('change', applyFilters);
+
+        function isDefect(val) {
+            if (!val) return false;
+            const strVal = String(val).trim().toUpperCase();
+            if (['', '-', 'NULL', 'OK', 'PASS', 'DONE', 'YES', 'TRUE', 'NONE'].includes(strVal)) {
+                return false;
+            }
+            return true; 
+        }
+
+        function formatTanggal(val) {
+            if (!val || String(val).trim() === "" || String(val).toUpperCase() === "NULL" || String(val) === "-") return "-";
+            if (String(val).includes('T') || !isNaN(Date.parse(val))) {
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) {
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    return `${day}-${month}-${year}`;
+                }
+            }
+            return val;
+        }
+
+        // FUNGSI UTAMA FILTER DATA + REALTIME SEARCH BAR GLOBAL
+        function applyFilters() {
+            const clientFilter = document.getElementById('filter-client').value;
+            const unitFilter = document.getElementById('filter-unit').value;
+            const periodeFilter = document.getElementById('filter-periode').value;
+            const processFilter = document.getElementById('filter-process').value;
+            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+
+            let defectCounts = { assy: 0, weld: 0, leak: 0, fill: 0, align: 0, cover: 0, paint: 0 };
+
+            let filteredData = rawData.filter(row => {
+                let match = true;
+                
+                if (clientFilter !== 'All' && row["Client"] != clientFilter) match = false;
+                if (unitFilter !== 'All' && row["Unit"] != unitFilter) match = false;
+                if (periodeFilter !== 'All' && !(String(row["Periode"]).toLowerCase().includes(periodeFilter.toLowerCase()))) match = false;
+                
+                if (processFilter !== 'All') {
+                    const processVal = String(row[processFilter] || "").trim().toLowerCase();
+                    if (processVal === "" || processVal === "null" || processVal === "-") match = false;
+                }
+
+                if (searchQuery && match) {
+                    let combinedRowString = Object.keys(row).map(k => String(row[k]).toLowerCase()).join(" ");
+                    if (!combinedRowString.includes(searchQuery)) match = false;
+                }
+                
+                if (match) {
+                    if (isDefect(row["Assy Defect"])) defectCounts.assy++;
+                    if (isDefect(row["Welding Defect"])) defectCounts.weld++;
+                    if (isDefect(row["Leak Test Defect"])) defectCounts.leak++;
+                    if (isDefect(row["Filling Defect"])) defectCounts.fill++;
+                    if (isDefect(row["Alignment Defect"])) defectCounts.align++;
+                    if (isDefect(row["Cover Defect"])) defectCounts.cover++;
+                    if (isDefect(row["Painting Defect"])) defectCounts.paint++;
+                }
+
+                return match;
+            });
+
+            document.getElementById('sum-total').innerText = filteredData.length;
+            document.getElementById('sum-assy').innerText = defectCounts.assy;
+            document.getElementById('sum-weld').innerText = defectCounts.weld;
+            document.getElementById('sum-leak').innerText = defectCounts.leak;
+            document.getElementById('sum-fill').innerText = defectCounts.fill;
+            document.getElementById('sum-align').innerText = defectCounts.align;
+            document.getElementById('sum-cover').innerText = defectCounts.cover;
+            document.getElementById('sum-paint').innerText = defectCounts.paint;
+
+            renderTable(filteredData);
+        }
+        
+        function formatStatus(val) {
+            const strVal = String(val).trim().toUpperCase();
+            if(!strVal || strVal === 'NULL' || strVal === '-') return `<span class="status-badge status-none">-</span>`;
+            if(['OK', 'PASS', 'DONE', 'YES', 'TRUE'].includes(strVal)) return `<span class="status-badge status-pass">${strVal}</span>`;
+            if(isDefect(strVal)) return `<span class="status-badge status-defect">${val}</span>`;
+            return val;
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                requestedColumns.forEach(col => {
+                    const td = document.createElement('td');
+                    let cellValue = row[col] || "";
+                    
+                    if (col.toLowerCase().startsWith("date")) {
+                        td.textContent = formatTanggal(cellValue);
+                    } else if (["Assembly", "Welding", "Leak Test", "Filling", "Alignment", "Covering", "Painting", "Assy Defect", "Welding Defect", "Leak Test Defect", "Filling Defect", "Alignment Defect", "Cover Defect", "Painting Defect"].includes(col)) {
+                        td.innerHTML = formatStatus(cellValue);
+                    } else {
+                        td.textContent = cellValue;
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        fetchData();
+        setInterval(fetchData, 60000);
+    </script>
+</body>
+</html>
