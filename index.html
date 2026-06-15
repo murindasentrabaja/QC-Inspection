@@ -14,6 +14,7 @@
             --accent-color: #f97316;  /* Glowing Orange */
             --success-color: #10b981; /* Emerald Green */
             --gemini-blue: #3b82f6;   /* Soft Blue */
+            --purple-lkp: #8b5cf6;    /* Tombol LKP */
             --bg-color: #f8fafc;
             --text-dark: #1e293b;
             --glass-bg: rgba(255, 255, 255, 0.75);
@@ -26,7 +27,6 @@
             margin: 0;
             padding: 25px;
             background-color: var(--bg-color);
-            /* Background Aura Gemini (Tosca, Oranye, Hijau) */
             background-image: 
                 radial-gradient(circle at 15% 20%, rgba(13, 148, 136, 0.12) 0%, transparent 45%),
                 radial-gradient(circle at 85% 30%, rgba(249, 115, 22, 0.1) 0%, transparent 45%),
@@ -38,6 +38,92 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* LAYOUT SPLIT SCREEN SIDE BY SIDE */
+        .master-layout {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            width: 100%;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            transition: width var(--transition-speed) ease;
+        }
+
+        .side-panel-lkp {
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px 0 var(--shadow);
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Saat panel LKP Aktif */
+        .master-layout.lkp-active .main-dashboard {
+            width: 55%;
+            flex: none;
+        }
+
+        .master-layout.lkp-active .side-panel-lkp {
+            width: 45%;
+            opacity: 1;
+            padding: 15px;
+        }
+
+        .lkp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(13, 148, 136, 0.15);
+        }
+
+        .lkp-header h3 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: var(--purple-lkp);
+        }
+
+        .btn-close-lkp {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .btn-close-lkp:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        iframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
 
         /* Top Header Area */
@@ -57,7 +143,6 @@
             font-weight: 700;
             font-size: 2.2rem;
             margin: 0;
-            /* Gradasi Teks Judul ala Gemini */
             background: linear-gradient(135deg, var(--primary-color), var(--gemini-blue), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -136,6 +221,11 @@
             box-shadow: 0 4px 12px var(--shadow);
         }
 
+        .btn-lkp {
+            background: linear-gradient(135deg, var(--purple-lkp), #d946ef);
+            color: white;
+        }
+
         .btn-refresh {
             background: linear-gradient(135deg, var(--primary-color), #0f766e);
             color: white;
@@ -165,7 +255,6 @@
             transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Hover Mewah & Transparan Untuk Grid Utama */
         .glass-container:hover {
             border-color: rgba(13, 148, 136, 0.35);
             box-shadow: 0 15px 40px rgba(13, 148, 136, 0.1), 0 10px 20px rgba(249, 115, 22, 0.05);
@@ -177,7 +266,6 @@
             gap: 18px;
         }
 
-        /* Search Box Khusus */
         .search-group {
             grid-column: span 2;
             display: flex;
@@ -186,13 +274,13 @@
         }
         @media (max-width: 768px) {
             .search-group { grid-column: span 1; }
+            .master-layout.lkp-active { flex-direction: column; }
+            .master-layout.lkp-active .main-dashboard, 
+            .master-layout.lkp-active .side-panel-lkp { width: 100%; }
+            .side-panel-lkp { height: 600px; }
         }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
 
         label {
             font-size: 0.85rem;
@@ -237,7 +325,7 @@
             padding: 14px 18px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.01);
-            min-width: 115px;
+            min-width: 100px;
             flex: 1;
             transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
@@ -246,7 +334,6 @@
         .summary-card.total { background: #f8fafc; border-color: #cbd5e1; }
         .summary-card.defect { background: #ffffff; border-color: #f1f5f9; }
 
-        /* Hover Mewah Transparan pada Summary Card */
         .summary-card:hover {
             transform: translateY(-5px);
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 1));
@@ -255,7 +342,7 @@
         }
 
         .summary-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #64748b;
             text-transform: uppercase;
@@ -265,7 +352,7 @@
         .summary-card.defect .summary-title { color: #475569; }
 
         .summary-value {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
             color: var(--primary-color);
@@ -288,7 +375,6 @@
             position: relative;
         }
 
-        /* Scrollbar Styling */
         .table-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .table-wrapper::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
@@ -323,7 +409,6 @@
             transition: all 0.25s ease;
         }
 
-        /* PROSES BEKUKAN HORIZONTAL (Serial Number s/d Periode) */
         th:nth-child(1), td:nth-child(1) { position: sticky; left: 0; z-index: 6; min-width: 140px; max-width: 140px; }
         th:nth-child(2), td:nth-child(2) { position: sticky; left: 140px; z-index: 6; min-width: 100px; max-width: 100px; }
         th:nth-child(3), td:nth-child(3) { position: sticky; left: 240px; z-index: 6; min-width: 110px; max-width: 110px; }
@@ -334,32 +419,21 @@
             z-index: 6; 
             min-width: 120px; 
             max-width: 120px;
-            /* Garis pembatas elegan penanda area freeze (Warna Tosca Soft) */
             border-right: 2px solid rgba(13, 148, 136, 0.25) !important; 
         }
 
-        /* Menjaga z-index header beku agar tidak tabrakan saat guling vertikal */
         th:nth-child(-n+5) { z-index: 12; background: #f0fdfa !important; color: var(--primary-color); }
-
-        /* Mengunci background kolom beku agar data gulung belakangnya tidak transparan bayang */
         tr:nth-child(odd) td:nth-child(-n+5) { background: #ffffff; }
         tr:nth-child(even) td:nth-child(-n+5) { background: #f8fafc; }
 
-        /* EFEK HOVER DATA TABEL YANG BARU (Soft, Clean, Elegan - Tidak Aneh) */
         tr:hover td { 
-            /* Gradasi super lembut Tosca ke Oranye */
             background: linear-gradient(90deg, rgba(13, 148, 136, 0.08), rgba(249, 115, 22, 0.04)) !important;
             color: #0f172a;
             font-weight: 600;
             transform: scale(1.001);
-            /* Border atas dan bawah menyala tipis warna Tosca */
             box-shadow: inset 0 1px 0 rgba(13, 148, 136, 0.2), inset 0 -1px 0 rgba(13, 148, 136, 0.2);
         }
-        
-        /* Baris beku tetap mempertahankan keselarasan warna background hover */
-        tr:hover td:nth-child(-n+5) { 
-            background: linear-gradient(90deg, #f0fdfa, #fff7ed) !important; 
-        }
+        tr:hover td:nth-child(-n+5) { background: linear-gradient(90deg, #f0fdfa, #fff7ed) !important; }
 
         footer {
             margin-top: auto;
@@ -383,7 +457,6 @@
 
         @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* Status Badges */
         .status-badge {
             padding: 4px 10px;
             border-radius: 6px;
@@ -391,17 +464,19 @@
             font-size: 0.85rem;
             display: inline-block;
         }
-        .status-pass { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; } /* Hijau Soft */
+        .status-pass { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
         .status-defect { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .status-none { background: #f1f5f9; color: #94a3b8; }
 
-        /* ==================== CONFIG PRINT MEDIA AUTOMATIC ==================== */
+        /* CONFIG PRINT MEDIA */
         .print-only-header { display: none; }
         @media print {
             body { background: #ffffff !important; background-image: none !important; padding: 0 !important; color: #000000 !important; }
-            .header-container, .glass-container:nth-of-type(1), .summary-panel, .action-buttons, footer, #loading {
+            .header-container, .glass-container:nth-of-type(1), .summary-panel, .action-buttons, footer, #loading, .side-panel-lkp {
                 display: none !important;
             }
+            .master-layout { display: block; }
+            .main-dashboard { width: 100% !important; }
             .glass-container { border: none !important; box-shadow: none !important; padding: 0 !important; background: transparent !important; }
             .print-only-header {
                 display: block !important;
@@ -415,7 +490,7 @@
             .table-wrapper { max-height: none !important; overflow: visible !important; border: none !important; }
             table { width: 100% !important; border-collapse: collapse !important; }
             th, td { 
-                position: static !important; /* Lepas sistem pembekuan agar tercetak semua kolom */
+                position: static !important;
                 background: transparent !important; 
                 color: #000000 !important; 
                 border: 1px solid #94a3b8 !important; 
@@ -435,124 +510,163 @@
         <p id="print-timestamp"></p>
     </div>
 
-    <div class="header-container">
-        <div class="brand-section">
-            <h1>Quality Control Inspection</h1>
-        </div>
-        <div class="info-widgets">
-            <div class="live-clock" id="live-timer">Memuat Waktu...</div>
-            <div class="sync-status">
-                <span class="pulse-dot"></span>MSB System Online
-            </div>
-            <div class="action-buttons">
-                <button class="btn btn-refresh" onclick="fetchData()">🍃 Refresh</button>
-                <button class="btn btn-print" onclick="triggerPrint()">🖨️ Cetak</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass-container">
-        <div class="filters-grid">
-            <div class="search-group">
-                <label>Pencarian Kata Kunci</label>
-                <input type="text" id="search-input" placeholder="Ketik apa saja untuk cari data (Contoh: SN, Client, Unit)..." oninput="applyFilters()">
-            </div>
-            <div class="filter-group">
-                <label>Client</label>
-                <select id="filter-client"><option value="All">All Clients</option></select>
-            </div>
-            <div class="filter-group">
-                <label>Unit</label>
-                <select id="filter-unit"><option value="All">All Units</option></select>
-            </div>
-            <div class="filter-group">
-                <label>Periode</label>
-                <select id="filter-periode">
-                    <option value="All">All Periode</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Proses</label>
-                <select id="filter-process">
-                    <option value="All">All Processes</option>
-                    <option value="Assembly">Assembly</option>
-                    <option value="Welding">Welding</option>
-                    <option value="Leak Test">Leak Test</option>
-                    <option value="Filling">Filling</option>
-                    <option value="Alignment">Alignment</option>
-                    <option value="Covering">Covering</option>
-                    <option value="Painting">Painting</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass-container">
-        <div class="summary-panel" id="summary-panel" style="display: none;">
-            <div class="summary-card total">
-                <div class="summary-title">Total Filtered</div>
-                <div class="summary-value" id="sum-total">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Assy Defect</div>
-                <div class="summary-value" id="sum-assy">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Weld Defect</div>
-                <div class="summary-value" id="sum-weld">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Leak Defect</div>
-                <div class="summary-value" id="sum-leak">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Fill Defect</div>
-                <div class="summary-value" id="sum-fill">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Align Defect</div>
-                <div class="summary-value" id="sum-align">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Cover Defect</div>
-                <div class="summary-value" id="sum-cover">0</div>
-            </div>
-            <div class="summary-card defect">
-                <div class="summary-title">Paint Defect</div>
-                <div class="summary-value" id="sum-paint">0</div>
-            </div>
-        </div>
-
-        <div id="loading" class="loading">Menyiapkan data dari Sistem ERP MSB...</div>
+    <div class="master-layout" id="master-layout">
         
-        <div class="table-wrapper" id="table-container" style="display: none;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Serial Number</th><th>Unit</th><th>Unit Number</th><th>Client</th><th>Periode</th>
-                        <th>Assembly</th><th>Date Assy</th><th>Assy Defect</th>
-                        <th>Welding</th><th>Date Weld</th><th>Welding Defect</th>
-                        <th>Leak Test</th><th>Date Leak Test</th><th>Leak Test Defect</th>
-                        <th>Filling</th><th>Date Filling</th><th>Filling Defect</th>
-                        <th>Alignment</th><th>Date Alignment</th><th>Alignment Defect</th>
-                        <th>Covering</th><th>Date Covering</th><th>Cover Defect</th>
-                        <th>Painting</th><th>Date Painting</th><th>Painting Defect</th>
-                        <th>Production Total</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
-    </div>
+        <div class="main-dashboard">
+            <div class="header-container">
+                <div class="brand-section">
+                    <h1>Quality Control Inspection</h1>
+                </div>
+                <div class="info-widgets">
+                    <div class="live-clock" id="live-timer">Memuat Waktu...</div>
+                    <div class="sync-status">
+                        <span class="pulse-dot"></span>MSB System Online
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-lkp" id="btn-toggle-lkp" onclick="toggleLKP()">📊 Buka LKP</button>
+                        <button class="btn btn-refresh" onclick="fetchData()">🍃 Refresh</button>
+                        <button class="btn btn-print" onclick="triggerPrint()">🖨️ Cetak</button>
+                    </div>
+                </div>
+            </div>
 
-    <footer>
-        Licensed to PT Murinda Sentra Baja | Developed by Aspuro Amarulloh Khoiri &copy; 2026<br>
-        <span style="font-size: 0.8rem; font-weight: 600; color: #cbd5e1;">Quality Control PT Murinda Sentra Baja</span>
-    </footer>
+            <div class="glass-container">
+                <div class="filters-grid">
+                    <div class="search-group">
+                        <label>Pencarian Kata Kunci</label>
+                        <input type="text" id="search-input" placeholder="Ketik apa saja untuk cari data (Contoh: SN, Client, Unit)..." oninput="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label>Client</label>
+                        <select id="filter-client"><option value="All">All Clients</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Unit</label>
+                        <select id="filter-unit"><option value="All">All Units</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Periode</label>
+                        <select id="filter-periode">
+                            <option value="All">All Periode</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Proses</label>
+                        <select id="filter-process">
+                            <option value="All">All Processes</option>
+                            <option value="Assembly">Assembly</option>
+                            <option value="Welding">Welding</option>
+                            <option value="Leak Test">Leak Test</option>
+                            <option value="Filling">Filling</option>
+                            <option value="Alignment">Alignment</option>
+                            <option value="Covering">Covering</option>
+                            <option value="Painting">Painting</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-container">
+                <div class="summary-panel" id="summary-panel" style="display: none;">
+                    <div class="summary-card total">
+                        <div class="summary-title">Total Filtered</div>
+                        <div class="summary-value" id="sum-total">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Assy Defect</div>
+                        <div class="summary-value" id="sum-assy">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Weld Defect</div>
+                        <div class="summary-value" id="sum-weld">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Leak Defect</div>
+                        <div class="summary-value" id="sum-leak">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Fill Defect</div>
+                        <div class="summary-value" id="sum-fill">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Align Defect</div>
+                        <div class="summary-value" id="sum-align">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Cover Defect</div>
+                        <div class="summary-value" id="sum-cover">0</div>
+                    </div>
+                    <div class="summary-card defect">
+                        <div class="summary-title">Paint Defect</div>
+                        <div class="summary-value" id="sum-paint">0</div>
+                    </div>
+                </div>
+
+                <div id="loading" class="loading">Menyiapkan data dari Sistem ERP MSB...</div>
+                
+                <div class="table-wrapper" id="table-container" style="display: none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Serial Number</th><th>Unit</th><th>Unit Number</th><th>Client</th><th>Periode</th>
+                                <th>Assembly</th><th>Date Assy</th><th>Assy Defect</th>
+                                <th>Welding</th><th>Date Weld</th><th>Welding Defect</th>
+                                <th>Leak Test</th><th>Date Leak Test</th><th>Leak Test Defect</th>
+                                <th>Filling</th><th>Date Filling</th><th>Filling Defect</th>
+                                <th>Alignment</th><th>Date Alignment</th><th>Alignment Defect</th>
+                                <th>Covering</th><th>Date Covering</th><th>Cover Defect</th>
+                                <th>Painting</th><th>Date Painting</th><th>Painting Defect</th>
+                                <th>Production Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <footer>
+                PT MURINDA SENTRA BAJA &copy; 2026<br>
+                <span style="font-size: 0.8rem; font-weight: 600; color: #cbd5e1;">Quality Control PT Murinda Sentra Baja</span>
+            </footer>
+        </div>
+
+        <div class="side-panel-lkp" id="side-panel">
+            <div class="lkp-header">
+                <h3>📊 Lembar Kerja Produksi (LKP)</h3>
+                <button class="btn-close-lkp" onclick="toggleLKP()">✕ Tutup</button>
+            </div>
+            <iframe id="lkp-iframe" src="about:blank"></iframe>
+        </div>
+
+    </div>
 
     <script>
         // Endpoint Google Apps Script Anda
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7xje4AJdwJ0O2X52IYmpOSybx-J6XceZ-Kre7BeLzQcSsGjw-0-8D565-xfwq27lAYQ/exec"; 
+
+        // LOGIKA SPLIT SCREEN / SIDE-BY-SIDE LKP
+        function toggleLKP() {
+            const masterLayout = document.getElementById('master-layout');
+            const btnToggle = document.getElementById('btn-toggle-lkp');
+            const iframe = document.getElementById('lkp-iframe');
+
+            // Jika sedang aktif, maka tutup
+            if (masterLayout.classList.contains('lkp-active')) {
+                masterLayout.classList.remove('lkp-active');
+                btnToggle.innerHTML = "📊 Buka LKP";
+                btnToggle.style.background = "linear-gradient(135deg, var(--purple-lkp), #d946ef)";
+            } 
+            // Jika sedang tertutup, maka buka side-by-side
+            else {
+                // Hanya load iframe jika belum di-load (hemat kuota/resource)
+                if (iframe.src === "about:blank" || !iframe.src.includes("murindasentrabaja")) {
+                    iframe.src = "https://murindasentrabaja.github.io/LKP/";
+                }
+                masterLayout.classList.add('lkp-active');
+                btnToggle.innerHTML = "✕ Tutup LKP";
+                btnToggle.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)"; // Warna merah saat mode tutup
+            }
+        }
 
         let rawData = [];
         const requestedColumns = [
