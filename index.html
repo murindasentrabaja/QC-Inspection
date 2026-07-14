@@ -242,7 +242,6 @@
             transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Saat panel LKP Aktif */
         .master-layout.lkp-active .main-dashboard {
             width: 55%;
             flex: none;
@@ -307,15 +306,53 @@
             border-bottom: 1px solid rgba(13, 148, 136, 0.15);
         }
 
-        .brand-section h1 {
+        /* PERBAIKAN BRAND SECTION / LOGO DASHBOARD */
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            max-height: 65px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-text h1 {
             font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 2.2rem;
+            font-weight: 800;
+            font-size: 1.7rem;
             margin: 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--gemini-blue), var(--accent-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--gemini-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .brand-text h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #334155;
+            margin: 2px 0 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            margin: 0;
         }
 
         /* Info Widget: Timer & Sync Status */
@@ -390,20 +427,10 @@
             box-shadow: 0 4px 12px var(--shadow);
         }
 
-        .btn-lkp {
-            background: linear-gradient(135deg, var(--purple-lkp), #d946ef);
-            color: white;
-        }
-
-        .btn-refresh {
-            background: linear-gradient(135deg, var(--primary-color), #0f766e);
-            color: white;
-        }
-
-        .btn-print {
-            background: linear-gradient(135deg, #0f172a, #334155);
-            color: white;
-        }
+        .btn-appsheet { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+        .btn-lkp { background: linear-gradient(135deg, var(--purple-lkp), #d946ef); color: white; }
+        .btn-refresh { background: linear-gradient(135deg, var(--primary-color), #0f766e); color: white; }
+        .btn-print { background: linear-gradient(135deg, #0f172a, #334155); color: white; }
 
         .btn:hover {
             transform: translateY(-2px);
@@ -637,11 +664,87 @@
         .status-defect { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .status-none { background: #f1f5f9; color: #94a3b8; }
 
+        /* ==========================================
+           MODAL LOGIN & APPSHEET VIEW STYLES
+           ========================================== */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); 
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 10000; opacity: 1; transition: opacity 0.35s ease; 
+        }
+        .modal-overlay.hidden { opacity: 0; pointer-events: none; }
+        .modal-card { 
+            background: white; padding: 35px; border-radius: 20px; 
+            width: 100%; max-width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
+            position: relative; transform: translateY(0) scale(1); 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .modal-overlay.hidden .modal-card { transform: translateY(-30px) scale(0.95); }
+        .btn-close-modal { 
+            position: absolute; top: 15px; right: 15px; background: #fee2e2; 
+            color: #ef4444; border: none; width: 32px; height: 32px; 
+            border-radius: 50%; font-weight: bold; cursor: pointer; 
+            transition: background 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-close-modal:hover { background: #ef4444; color: white; }
+        .modal-logo { max-width: 130px; display: block; margin: 0 auto 20px; }
+        .modal-card h3 { text-align: center; margin-top: 0; margin-bottom: 20px; color: var(--text-dark); font-family: 'Poppins', sans-serif; font-size: 1.4rem; }
+        .modal-card .form-group { margin-bottom: 18px; }
+        .modal-card label { font-size: 0.85rem; font-weight: 700; color: #64748b; display: block; margin-bottom: 6px; }
+        .modal-card select, .modal-card input { width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: inherit; font-size: 1rem; box-sizing: border-box; transition: border 0.3s; }
+        .modal-card select:focus, .modal-card input:focus { border-color: var(--gemini-blue); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .btn-submit-login { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--gemini-blue), #2563eb); color: white; border: none; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: all 0.3s; margin-top: 10px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+        .btn-submit-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+        .btn-submit-login:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+        .loading-text { text-align: center; color: var(--gemini-blue); font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; display: none; }
+
+        /* AppSheet Full View Container */
+        .appsheet-container { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: #ffffff; z-index: 99999; display: flex; flex-direction: column; 
+            opacity: 1; transform: scale(1); 
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .appsheet-container.hidden { 
+            opacity: 0; transform: scale(1.05); pointer-events: none; 
+        }
+        .appsheet-container iframe { width: 100%; height: 100%; border: none; flex: 1; }
+        
+        /* Tombol Kembali Kecil di AppSheet */
+        .btn-kembali-appsheet-small {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(15, 23, 42, 0.85);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 100000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .btn-kembali-appsheet-small:hover {
+            background: #ef4444;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.4);
+        }
+
         /* CONFIG PRINT MEDIA */
         .print-only-header { display: none; }
         @media print {
             body { background: #ffffff !important; background-image: none !important; padding: 0 !important; color: #000000 !important; }
-            #login-overlay { display: none !important; }
+            #login-overlay, .modal-overlay, .appsheet-container { display: none !important; }
             .header-container, .glass-container:nth-of-type(1), .summary-panel, .action-buttons, footer, #loading, .side-panel-lkp {
                 display: none !important;
             }
@@ -711,14 +814,21 @@
         <div class="main-dashboard">
             <div class="header-container">
                 <div class="brand-section">
-                    <h1>Quality Control Inspection</h1>
+                    <img src="MSB Logo.png" alt="Logo MSB" class="brand-logo" onerror="this.src='https://via.placeholder.com/150x50?text=Logo+MSB'">
+                    <div class="brand-text">
+                        <h1>PT MURINDA SENTRA BAJA</h1>
+                        <h2>Quality Control</h2>
+                        <p>Kalijati, Subang</p>
+                    </div>
                 </div>
+
                 <div class="info-widgets">
                     <div class="live-clock" id="live-timer">Memuat Waktu...</div>
                     <div class="sync-status">
                         <span class="pulse-dot"></span>MSB System Online
                     </div>
                     <div class="action-buttons">
+                        <button class="btn btn-appsheet" onclick="openAppsheetLoginModal()">📱 Masuk MSB QC System</button>
                         <button class="btn btn-lkp" id="btn-toggle-lkp" onclick="toggleLKP()">📊 Buka LKP</button>
                         <button class="btn btn-refresh" onclick="fetchData()">🍃 Refresh</button>
                         <button class="btn btn-print" onclick="triggerPrint()">🖨️ Cetak</button>
@@ -836,11 +946,139 @@
 
     </div>
 
-    <script>
-        // Endpoint Google Apps Script Anda
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7xje4AJdwJ0O2X52IYmpOSybx-J6XceZ-Kre7BeLzQcSsGjw-0-8D565-xfwq27lAYQ/exec"; 
+    <div id="login-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="btn-close-modal" onclick="closeAppsheetLoginModal()">✕</button>
+            <img src="MSB Logo.png" alt="Logo MSB" class="modal-logo" onerror="this.src='https://via.placeholder.com/150x60?text=Logo+MSB'">
+            <h3>Otorisasi System</h3>
+            
+            <div id="loading-users" class="loading-text" style="display: none;">Memuat daftar pengguna...</div>
+            
+            <form id="appsheet-login-form" onsubmit="prosesAppsheetLogin(event)">
+                <div class="form-group">
+                    <label>Pilih Pengguna</label>
+                    <select id="username-select" required>
+                        <option value="">-- Silakan Pilih --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kata Sandi</label>
+                    <input type="password" id="password-input" placeholder="Masukkan kata sandi" required>
+                </div>
+                <button type="submit" class="btn-submit-login" id="btn-submit-login">Masuk Sistem</button>
+            </form>
+        </div>
+    </div>
 
-        // LOGIKA LOGIN SYSTEM
+    <div id="appsheet-view" class="appsheet-container hidden">
+        
+        <button class="btn-kembali-appsheet-small" onclick="closeAppSheet()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Kembali ke Dashboard
+        </button>
+
+        <iframe id="appsheet-frame" src=""></iframe>
+    </div>
+
+    <script>
+        // Endpoint Google Apps Script ERP Data (Yang sudah ada)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7xje4AJdwJ0O2X52IYmpOSybx-J6XceZ-Kre7BeLzQcSsGjw-0-8D565-xfwq27lAYQ/exec"; 
+        
+        // ==========================================
+        // KONFIGURASI LOGIN APPSHEET 
+        // ==========================================
+        const GAS_LOGIN_URL = "https://script.google.com/macros/s/AKfycbwI-zBVzCRTSxt7BfA8gZg2BQxNrzgMqs6-4yekv90Ly91_P8anxQDY_DBgqsD94tpd-g/exec"; 
+        const APPSHEET_URL = "https://www.appsheet.com/start/b67426b8-f0fb-4d26-ba1b-cfad985b947e";
+
+        function openAppsheetLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            fetchUserDropdown();
+        }
+
+        function closeAppsheetLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        let usersLoaded = false;
+        function fetchUserDropdown() {
+            if (usersLoaded) return;
+            const btn = document.getElementById('btn-submit-login');
+            const select = document.getElementById('username-select');
+            const loadingText = document.getElementById('loading-users');
+            
+            if(GAS_LOGIN_URL === "GANTI_URL_WEB_APP_APPS_SCRIPT_ANDA_DISINI") {
+                alert("Harap ganti variabel GAS_LOGIN_URL di file HTML dengan URL Deployment Anda.");
+                return;
+            }
+
+            loadingText.style.display = 'block';
+            btn.disabled = true;
+
+            fetch(GAS_LOGIN_URL + "?action=getUsers")
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(user => {
+                        const opt = document.createElement('option');
+                        opt.value = user; opt.text = user;
+                        select.appendChild(opt);
+                    });
+                    usersLoaded = true;
+                    loadingText.style.display = 'none';
+                    btn.disabled = false;
+                })
+                .catch(err => {
+                    console.error("Gagal load user:", err);
+                    loadingText.innerText = "Gagal memuat data. Periksa URL Deployment Apps Script.";
+                    loadingText.style.color = "red";
+                    btn.disabled = false;
+                });
+        }
+
+        function prosesAppsheetLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username-select').value;
+            const pass = document.getElementById('password-input').value;
+            const btn = document.getElementById('btn-submit-login');
+
+            btn.disabled = true;
+            btn.innerText = "Memverifikasi Otorisasi...";
+
+            fetch(GAS_LOGIN_URL + "?action=login&username=" + encodeURIComponent(user) + "&password=" + encodeURIComponent(pass))
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        closeAppsheetLoginModal();
+                        openAppsheetView();
+                        document.getElementById('password-input').value = ""; 
+                    } else {
+                        alert("Kombinasi Pengguna dan Kata Sandi Salah!");
+                    }
+                    btn.disabled = false;
+                    btn.innerText = "Masuk Sistem";
+                })
+                .catch(err => {
+                    alert("Terjadi kesalahan saat memverifikasi login.");
+                    btn.disabled = false;
+                    btn.innerText = "Masuk Sistem";
+                });
+        }
+
+        function openAppsheetView() {
+            const view = document.getElementById('appsheet-view');
+            const iframe = document.getElementById('appsheet-frame');
+            
+            if(iframe.src === "" || iframe.src === "about:blank" || !iframe.src.includes("appsheet.com")) {
+                iframe.src = APPSHEET_URL;
+            }
+            view.classList.remove('hidden');
+        }
+
+        function closeAppSheet() {
+            const view = document.getElementById('appsheet-view');
+            view.classList.add('hidden');
+        }
+
+        // LOGIKA LOGIN SYSTEM (DASHBOARD UTAMA)
         function enterSystem() {
             const overlay = document.getElementById('login-overlay');
             overlay.style.opacity = '0';
@@ -850,9 +1088,7 @@
                 overlay.classList.add('hidden');
             }, 500); 
             
-            // Panggil fetchData pertama kali saat login
             fetchData();
-            // Set auto refresh tiap 60 detik setelah login berhasil
             setInterval(fetchData, 60000);
         }
 
@@ -862,21 +1098,18 @@
             const btnToggle = document.getElementById('btn-toggle-lkp');
             const iframe = document.getElementById('lkp-iframe');
 
-            // Jika sedang aktif, maka tutup
             if (masterLayout.classList.contains('lkp-active')) {
                 masterLayout.classList.remove('lkp-active');
                 btnToggle.innerHTML = "📊 Buka LKP";
                 btnToggle.style.background = "linear-gradient(135deg, var(--purple-lkp), #d946ef)";
             } 
-            // Jika sedang tertutup, maka buka side-by-side
             else {
-                // Hanya load iframe jika belum di-load (hemat kuota/resource)
                 if (iframe.src === "about:blank" || !iframe.src.includes("murindasentrabaja")) {
                     iframe.src = "https://murindasentrabaja.github.io/LKP/";
                 }
                 masterLayout.classList.add('lkp-active');
                 btnToggle.innerHTML = "✕ Tutup LKP";
-                btnToggle.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)"; // Warna merah saat mode tutup
+                btnToggle.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)"; 
             }
         }
 
