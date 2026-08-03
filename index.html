@@ -254,6 +254,7 @@
         .action-buttons {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -302,7 +303,7 @@
 
         .filters-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
 
@@ -312,14 +313,7 @@
             flex-direction: column;
             gap: 8px;
         }
-        @media (max-width: 768px) {
-            .search-group { grid-column: span 1; }
-            .master-layout.lkp-active { flex-direction: column; }
-            .master-layout.lkp-active .main-dashboard, 
-            .master-layout.lkp-active .side-panel-lkp { width: 100%; }
-            .side-panel-lkp { height: 600px; }
-        }
-
+        
         .filter-group { display: flex; flex-direction: column; gap: 8px; }
 
         label {
@@ -611,6 +605,89 @@
             background: #dc2626;
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN (MOBILE & TABLET ADJUSTMENTS)
+           ========================================== */
+        @media (max-width: 992px) {
+            .master-layout.lkp-active { flex-direction: column; }
+            .master-layout.lkp-active .main-dashboard, 
+            .master-layout.lkp-active .side-panel-lkp { width: 100%; }
+            .side-panel-lkp { height: 600px; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            
+            /* Header & Widgets */
+            .header-container { flex-direction: column; align-items: stretch; gap: 15px; }
+            .brand-section { flex-direction: column; align-items: center; text-align: center; }
+            .info-widgets { flex-direction: column; align-items: stretch; gap: 12px; }
+            .live-clock, .sync-status { text-align: center; justify-content: center; }
+            
+            /* Action Buttons Grid */
+            .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+            .action-buttons .btn { justify-content: center; font-size: 0.85rem; padding: 12px 10px; }
+
+            /* Filters Grid Adjustment */
+            .filters-grid { grid-template-columns: 1fr; gap: 15px; }
+            .search-group { grid-column: span 1; }
+            
+            /* Summary Cards Grid */
+            .glass-container { padding: 16px; }
+            .summary-panel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .summary-card { min-width: auto; padding: 12px; }
+            .summary-value { font-size: 1.5rem; }
+
+            /* --- MENGATASI ISU TABLE OVERFLOW DI MOBILE --- */
+            /* Matikan efek freeze/sticky untuk kolom 2 sampai 5 agar tabel bisa digeser */
+            th:nth-child(2), td:nth-child(2),
+            th:nth-child(3), td:nth-child(3),
+            th:nth-child(4), td:nth-child(4),
+            th:nth-child(5), td:nth-child(5) { 
+                position: static !important; 
+                min-width: auto !important; 
+                max-width: none !important; 
+                border-right: none !important; 
+                z-index: 1 !important;
+            }
+            
+            /* Reset styling warna agar menyatu dengan kolom biasa */
+            th:nth-child(2), th:nth-child(3), th:nth-child(4), th:nth-child(5) {
+                background: rgba(241, 245, 249, 0.85) !important;
+                color: #475569 !important;
+                z-index: 10 !important; /* Tetap sticky di atas (Header) */
+            }
+            
+            tr:nth-child(odd) td:nth-child(2), tr:nth-child(odd) td:nth-child(3), 
+            tr:nth-child(odd) td:nth-child(4), tr:nth-child(odd) td:nth-child(5),
+            tr:nth-child(even) td:nth-child(2), tr:nth-child(even) td:nth-child(3), 
+            tr:nth-child(even) td:nth-child(4), tr:nth-child(even) td:nth-child(5) {
+                background: rgba(255, 255, 255, 0.25) !important; /* Warna normal tabel */
+            }
+            
+            /* Reset Hover effect pada kolom 2-5 untuk mobile */
+            tr:hover td:nth-child(2), tr:hover td:nth-child(3), 
+            tr:hover td:nth-child(4), tr:hover td:nth-child(5) {
+                background: linear-gradient(180deg, rgba(255,255,255,0.92) 94%, transparent 94%), 
+                            linear-gradient(90deg, #0e7490, #2563eb, #f97316) !important;
+                color: #0f172a !important;
+            }
+
+            /* Kolom 1 (Serial Number) tetap freeze agar ada identitas data saat digeser */
+            th:nth-child(1), td:nth-child(1) { 
+                border-right: 2px solid rgba(14, 116, 144, 0.25) !important; 
+                box-shadow: 2px 0 8px rgba(0,0,0,0.06); 
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons { grid-template-columns: 1fr; }
+            .summary-panel { grid-template-columns: 1fr 1fr; }
+            .brand-text h1 { font-size: 1.4rem; text-align: center; }
+            .brand-text h2 { font-size: 0.95rem; text-align: center; }
+            .brand-text p { text-align: center; }
         }
 
         /* CONFIG PRINT MEDIA */
