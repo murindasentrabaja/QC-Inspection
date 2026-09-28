@@ -195,7 +195,7 @@ async function doLogin(u,p,msg,fb){$('#er').textContent='';busy(msg||'Memverifik
   try{const r=await api('login',{username:u,password:p});tok=r.token;sessionStorage.qt=tok;await enter()}
   catch(x){$('#er').textContent=fb?fb+' ('+x.message+')':x.message;const c=$('.lc');c.classList.add('shk');setTimeout(()=>c.classList.remove('shk'),500)}idle()}
 $('#lf').onsubmit=e=>{e.preventDefault();doLogin($('#un').value,$('#pw').value)};
-$('#gs').onclick=()=>doLogin(GUEST_USER,GUEST_PASS,'Masuk sebagai tamu','Mode tamu belum aktif: buat akun “'+GUEST_USER+'” di sheet Login');
+$('#gs').onclick=()=>doLogin(GUEST_USER,GUEST_PASS,'Masuk sebagai tamu','Pilih akun Tamu “'+GUEST_USER+'” Password : 12345');
 async function enter(){S=await api('boot');U=S.user;$('#lg').hidden=true;$('#app').hidden=false;
   $('#cn').textContent='ERP Quality Control';$('#un2').textContent=U.name;$('#ur').textContent=U.role;$('#ui').textContent=U.name[0];$('#gb').hidden=!isG();buildNav();RT=Date.now();stamp();go('dash');setTimeout(pf,900);armAuto()}
 const nv=(k,i,n,c)=>`<a data-k="${k}" style="--a:${PAL[c%PAL.length][0]};--b:${PAL[c%PAL.length][1]}"><i class="ic">${i}</i><span>${esc(n)}</span></a>`;
