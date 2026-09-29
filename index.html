@@ -323,7 +323,7 @@ function prn(){const t=tbl();if(!t.rows.length)return toast('Tidak ada data untu
   const f=document.createElement('iframe');f.style.cssText='position:fixed;width:0;height:0;border:0';document.body.append(f);f.contentDocument.write(h);f.contentDocument.close();
   setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2500)},300)}
 /* ---- QC Inspector MSB: kode QR & bagikan ---- */
-const QC_NAME='QC Inspector MSB',QC_URL='https://murindasentrabaja.github.io/QC-Insepector/';
+const QC_NAME='QC Inspector MSB',QC_URL='https://murindasentrabaja.github.io/QC-Inspector/';
 async function qcCopy(){let ok=false;try{await navigator.clipboard.writeText(QC_URL);ok=true}catch(e){const t=document.createElement('textarea');t.value=QC_URL;t.style.cssText='position:fixed;opacity:0';document.body.append(t);t.select();try{ok=document.execCommand('copy')}catch(x){}t.remove()}
   ok?toast('Link disalin'):toast('Link tidak bisa disalin. Salin manual dari teks di jendela.',1)}
 function qcShare(){const d={title:QC_NAME,text:QC_NAME+' — PT Murinda Sentra Baja',url:QC_URL};
