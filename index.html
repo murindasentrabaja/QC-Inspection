@@ -197,23 +197,29 @@ async function api(fn,args,retry){
   let j;try{j=JSON.parse(t)}catch(e){
     if(!retry&&RD.includes(fn)&&/^\s*</.test(t)){await new Promise(z=>setTimeout(z,900));return api(fn,args,1)}
     throw new Error(htmlErr(t,r.status))}
-  if(!j.ok){if(j.auth&&tok)logout();throw new Error(j.error)}return j.data}
-function logout(){sessionStorage.clear();location.reload()}
+  if(!j.ok){if(j.auth&&tok)logout(!sessionStorage.g);throw new Error(j.error)}return j.data}
+// sl=1 -> setelah muat ulang tampilkan form login (tidak otomatis masuk sebagai tamu)
+function logout(sl){sessionStorage.clear();if(sl)sessionStorage.sl=1;location.reload()}
 document.addEventListener('click',e=>{const b=e.target.closest('.btn');if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement('span'),z=Math.max(r.width,r.height);s.className='rp';s.style.cssText=`width:${z}px;height:${z}px;left:${e.clientX-r.left-z/2}px;top:${e.clientY-r.top-z/2}px`;b.append(s);setTimeout(()=>s.remove(),600)});
 $('#eye').onclick=()=>{const p=$('#pw');p.type=p.type==='password'?'text':'password'};
-$('#lo').onclick=logout;const tg=()=>$('#mb').classList.toggle('x',innerWidth>900?!$('#app').classList.contains('hs'):$('#sb').classList.contains('open'));$('#mb').onclick=()=>{innerWidth>900?$('#app').classList.toggle('hs'):$('#sb').classList.toggle('open');tg()};tg();addEventListener('resize',tg);
+$('#lo').onclick=()=>logout(1);const tg=()=>$('#mb').classList.toggle('x',innerWidth>900?!$('#app').classList.contains('hs'):$('#sb').classList.contains('open'));$('#mb').onclick=()=>{innerWidth>900?$('#app').classList.toggle('hs'):$('#sb').classList.toggle('open');tg()};tg();addEventListener('resize',tg);
 document.querySelectorAll('.lic').forEach(i=>i.src=ICON);{const f=document.createElement('link');f.rel='icon';f.href=ICON;document.head.append(f)}
 document.querySelectorAll('.lgo').forEach(i=>i.src=LOGO);
 const tick=()=>{const d=new Date(),z={timeZone:'Asia/Jakarta'};document.querySelectorAll('.cdt').forEach(e=>e.textContent=d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric',...z}));document.querySelectorAll('.ctm').forEach(e=>e.textContent=d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,...z}).replace(/\./g,':')+' WIB')};tick();setInterval(tick,1000);
 async function start(){busy();try{
   if(!/^https?:/.test(API))throw new Error('Isi konstanta API di index.html dengan URL Web App hasil deploy.');
   if(tok){try{await enter();idle();return}catch(e){tok='';sessionStorage.clear()}}
-  const us=await api('users');$('#un').innerHTML=us.filter(u=>u!==GUEST_USER).map(u=>`<option>${esc(u)}</option>`).join('')}catch(e){$('#er').textContent=e.message}idle()}
+  // Langsung masuk sebagai tamu, kecuali pengguna baru saja menekan Keluar (form login ditampilkan)
+  if(!sessionStorage.sl){await doLogin(GUEST_USER,[GUEST_PASS,'12345'],'Masuk sebagai tamu','Gagal masuk sebagai tamu');if(U)return}
+  await loadUsers()}catch(e){$('#er').textContent=e.message}idle()}
+async function loadUsers(){try{const us=await api('users');$('#un').innerHTML=us.filter(u=>u!==GUEST_USER).map(u=>`<option>${esc(u)}</option>`).join('')}catch(e){if(!$('#er').textContent)$('#er').textContent=e.message}}
 async function doLogin(u,p,msg,fb){$('#er').textContent='';busy(msg||'Memverifikasi akses');
-  try{const r=await api('login',{username:u,password:p});tok=r.token;sessionStorage.qt=tok;await enter()}
+  try{let r;for(const q of [].concat(p)){try{r=await api('login',{username:u,password:q});break}catch(x){if(!/Password salah/.test(x.message))throw x}}
+    if(!r)throw new Error('Password salah. Periksa kembali lalu coba lagi.');
+    tok=r.token;sessionStorage.qt=tok;if(u===GUEST_USER)sessionStorage.g=1;await enter()}
   catch(x){$('#er').textContent=fb?fb+' ('+x.message+')':x.message;const c=$('.lc');c.classList.add('shk');setTimeout(()=>c.classList.remove('shk'),500)}idle()}
 $('#lf').onsubmit=e=>{e.preventDefault();doLogin($('#un').value,$('#pw').value)};
-$('#gs').onclick=()=>doLogin(GUEST_USER,GUEST_PASS,'Masuk sebagai tamu','Pilih akun Tamu “'+GUEST_USER+'” Password : 12345');
+$('#gs').onclick=()=>doLogin(GUEST_USER,[GUEST_PASS,'12345'],'Masuk sebagai tamu','Pilih akun Tamu “'+GUEST_USER+'” Password : 12345');
 async function enter(){S=await api('boot');U=S.user;$('#lg').hidden=true;$('#app').hidden=false;
   $('#cn').textContent='ERP Quality Control';$('#un2').textContent=U.name;$('#ur').textContent=U.role;$('#ui').textContent=U.name[0];$('#gb').hidden=!isG();buildNav();RT=Date.now();stamp();go('dash');setTimeout(pf,900);armAuto()}
 const nv=(k,i,n,c)=>`<a data-k="${k}" style="--a:${PAL[c%PAL.length][0]};--b:${PAL[c%PAL.length][1]}"><i class="ic">${i}</i><span>${esc(n)}</span></a>`;
