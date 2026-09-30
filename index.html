@@ -184,9 +184,20 @@ const MSG=['Menyiapkan data mutu','Menyelaraskan hasil inspeksi','Memeriksa sert
 function busy(m){$('#ld').classList.add('on');const t=$('#lm');let i=0;t.textContent=m||MSG[0];clearInterval(mt);if(!m)mt=setInterval(()=>t.textContent=MSG[++i%MSG.length],1400)}
 function idle(){$('#ld').classList.remove('on');clearInterval(mt)}
 function toast(m,er){const d=document.createElement('div');d.className='to'+(er?' er':'');d.textContent=(er?'⚠️ ':'✅ ')+m;$('#ts').append(d);setTimeout(()=>d.remove(),3800)}
-async function api(fn,args){
-  const r=await fetch(fn==='users'?API+'?fn=users':API,fn==='users'?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,token:tok,args})});
-  const j=await r.json();if(!j.ok){if(j.auth&&tok)logout();throw new Error(j.error)}return j.data}
+// Balasan non-JSON (halaman HTML dari Google) dijelaskan penyebabnya, bukan lagi "Unexpected token '<'"
+const htmlErr=(t,s)=>/accounts\.google\.com|ServiceLogin/i.test(t)?'Web App Apps Script belum publik. Di Deploy > Manage deployments, set "Who has access" = Anyone.'
+  :s===404||/unable to open|not found|tidak ditemukan/i.test(t)?'URL /exec tidak ditemukan. Salin ulang URL Web App dari Deploy > Manage deployments ke konstanta API.'
+  :/^\s*</.test(t)?'Server membalas halaman HTML, bukan data. Periksa deployment Apps Script (akses "Anyone", versi terbaru) lalu coba lagi.'
+  :'Balasan server tidak dikenali: '+t.slice(0,60);
+const RD=['users','boot','dash','list']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
+async function api(fn,args,retry){
+  let r,t;
+  try{r=await fetch(fn==='users'?API+'?fn=users':API,fn==='users'?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,token:tok,args})});t=await r.text()}
+  catch(e){throw new Error('Tidak ada koneksi ke server')}
+  let j;try{j=JSON.parse(t)}catch(e){
+    if(!retry&&RD.includes(fn)&&/^\s*</.test(t)){await new Promise(z=>setTimeout(z,900));return api(fn,args,1)}
+    throw new Error(htmlErr(t,r.status))}
+  if(!j.ok){if(j.auth&&tok)logout();throw new Error(j.error)}return j.data}
 function logout(){sessionStorage.clear();location.reload()}
 document.addEventListener('click',e=>{const b=e.target.closest('.btn');if(!b)return;const r=b.getBoundingClientRect(),s=document.createElement('span'),z=Math.max(r.width,r.height);s.className='rp';s.style.cssText=`width:${z}px;height:${z}px;left:${e.clientX-r.left-z/2}px;top:${e.clientY-r.top-z/2}px`;b.append(s);setTimeout(()=>s.remove(),600)});
 $('#eye').onclick=()=>{const p=$('#pw');p.type=p.type==='password'?'text':'password'};
