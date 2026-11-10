@@ -222,6 +222,26 @@ tbody tr:hover{background:rgba(255,255,255,.55)}
 .sog>summary:before{content:'▸';color:var(--mut);transition:transform .2s}.sog[open]>summary:before{transform:rotate(90deg)}.sog>summary span{font-size:12px;color:var(--mut);font-weight:600}.sog>summary em{font-style:normal;margin-left:auto;font-size:12px;color:var(--p);background:#eef3ff;border-radius:20px;padding:1px 10px}
 .sog.l0>summary{font-size:16px}.sog.l1,.sog.l2,.sog.l3{margin:6px 8px}.sod u{display:inline-block;width:10px;height:10px;margin-right:3px;border-radius:50%;background:#d5dcec}.sod u.d1{background:var(--g)}.sod u.d2{background:var(--r)}
 #sob tbody tr{cursor:pointer}.kvg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 14px;margin:10px 0}.kvg div{padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.55)}.kvg small{display:block;color:var(--mut);font-size:11px}
+
+/* sales order: detail unit tampil di sisi kanan (master-detail) */
+.sol #sdp{display:none}
+.sol.op{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,500px);gap:16px;align-items:start}
+.sol.op #sdp{display:block;position:sticky;top:var(--sdt,100px);max-height:calc(100vh - var(--sdt,100px) - 14px);overflow:auto;overscroll-behavior:contain;background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 44px #16223b24;animation:sdin .28s cubic-bezier(.2,.9,.3,1)}
+@keyframes sdin{from{opacity:0;transform:translateX(26px)}}
+.sdh{position:sticky;top:0;z-index:2;display:flex;align-items:flex-start;gap:10px;padding:14px 16px 12px;background:#fff;border-bottom:1px solid var(--line)}
+.sdh>div{flex:1;min-width:0}.sdh b{display:block;font-size:17px;overflow-wrap:anywhere}.sdh small{display:block;color:var(--mut)}
+.sdx{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:800;color:var(--mut)}.sdx:hover{background:#ffe0e6;color:#d0234a}.sdx:focus-visible,#sob tbody tr:focus-visible{outline:2px solid var(--p);outline-offset:-2px}
+.sdb{padding:4px 16px 18px}.sdt{font-size:13px;margin:16px 0 4px;color:var(--mut)}
+.sdr{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.sdq{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}.nn{background:#eef1f8;color:#8b96b3}
+#sdp .kvg{grid-template-columns:repeat(2,minmax(0,1fr));margin:6px 0}#sdp .kvg b{overflow-wrap:anywhere}
+#sdp .sog.l1{margin:8px 0;border-color:var(--line);background:#fafbff}
+.sog>summary .ch.g{color:#0a8f64}.sog>summary .ch.rd{color:#d0234a}.sog>summary .ch.am{color:#b46b00}.sog>summary .ch.nn{color:#8b96b3}.sog>summary .ch.bl2{color:#2f57d6}
+.sdl{display:grid;grid-template-columns:minmax(96px,38%) minmax(0,1fr);margin:0;padding:0 14px 8px}.sdl dt,.sdl dd{margin:0;padding:6px 0;border-bottom:1px dotted var(--line)}.sdl dt{color:var(--mut);font-size:12px;padding-right:10px}.sdl dd{font-weight:700;overflow-wrap:anywhere}
+.sdn{margin:0;padding:0 14px 8px;color:var(--mut)}.sdf{padding:4px 14px 12px}.sdf .btn{padding:6px 12px;font-size:12px}
+#sob tbody tr.sel>td{background:#e8eeff}#sob tbody tr.sel>td:first-child{box-shadow:inset 3px 0 0 var(--p)}
+@media(min-width:901px){.sol.op #sob th:nth-child(5),.sol.op #sob td:nth-child(5),.sol.op #sob th:nth-child(6),.sol.op #sob td:nth-child(6),.sol.op #sob th:nth-child(7),.sol.op #sob td:nth-child(7),.sol.op #sob th:nth-child(10),.sol.op #sob td:nth-child(10){display:none}}
+@media(max-width:900px){.sol.op{display:block}.sol.op #sdp{position:fixed;inset:0;top:0;max-height:none;z-index:52;border:0;border-radius:0}.sdh{padding-top:max(14px,env(safe-area-inset-top))}}
+@media(prefers-reduced-motion:reduce){.sol.op #sdp{animation:none}}
 </style></head><body>
 <!-- LOGIN -->
 <div id="lg"><span class="bl b1"></span><span class="bl b2"></span><span class="bl b3"></span><span class="bl b4"></span>
@@ -258,7 +278,7 @@ const htmlErr=(t,s)=>/accounts\.google\.com|ServiceLogin/i.test(t)?'Web App Apps
   :s===404||/unable to open|not found|tidak ditemukan/i.test(t)?'URL /exec tidak ditemukan. Salin ulang URL Web App dari Deploy > Manage deployments ke konstanta API.'
   :/^\s*</.test(t)?'Server membalas halaman HTML, bukan data. Periksa deployment Apps Script (akses "Anyone", versi terbaru) lalu coba lagi.'
   :'Balasan server tidak dikenali: '+t.slice(0,60);
-const RD=['users','boot','dash','list','accGet','sigs','soList','soDet']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
+const RD=['users','boot','dash','list','accGet','sigs','so','soDet']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
 async function api(fn,args,retry){
   let r,t;
   try{r=await fetch(fn==='users'?API+'?fn=users':API,fn==='users'?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,token:tok,args})});t=await r.text()}
@@ -291,7 +311,7 @@ async function enter(){S=await api('boot');U=S.user;$('#lg').hidden=true;$('#app
 const nv=(k,i,n,c)=>`<a data-k="${k}" style="--a:${PAL[c%PAL.length][0]};--b:${PAL[c%PAL.length][1]}"><i class="ic">${i}</i><span>${esc(n)}</span></a>`;
 function buildNav(){let h=nv('dash','📊','Dashboard',0)+nv('so','🧾','Sales Order',1),n=2;['Inspeksi','Mutu','Master Data','Referensi'].forEach(g=>{const ks=Object.keys(S.mods).filter(k=>S.mods[k].g===g);h+=`<div class="gp cl"><h6 tabindex="0" role="button">${g}<em>${ks.length}</em><b>▾</b></h6><div class="gi">${ks.map(k=>nv(k,S.mods[k].i,S.mods[k].n,n++)).join('')}</div></div>`});if(U.dev)h+=`<div class="gp"><h6 tabindex="0" role="button">Pengaturan<em>1</em><b>▾</b></h6><div class="gi">${nv('akses','⚙️','Pengaturan Akses',n++)}</div></div>`;$('#nv').innerHTML=h}
 $('#nv').onclick=e=>{const g=e.target.closest('h6');if(g){g.parentElement.classList.toggle('cl');return}const a=e.target.closest('a');if(a){go(a.dataset.k);if(isM())sbo(0)}};$('#nv').onkeydown=e=>{if(e.key==='Enter'&&e.target.matches('h6'))e.target.click()};
-function go(k){cur=k;document.querySelectorAll('#nv a').forEach(a=>a.classList.toggle('on',a.dataset.k===k));const ga=document.querySelector('#nv a.on'),gg=ga&&ga.closest('.gp');if(gg)gg.classList.remove('cl');$('#tt').textContent=k==='dash'?'Dashboard Mutu':k==='akses'?'Pengaturan Akses':k==='so'?'Sales Order':S.mods[k].n;k==='dash'?dash():k==='akses'?akses():k==='so'?so():mod(k)}
+function go(k){soClose();cur=k;document.querySelectorAll('#nv a').forEach(a=>a.classList.toggle('on',a.dataset.k===k));const ga=document.querySelector('#nv a.on'),gg=ga&&ga.closest('.gp');if(gg)gg.classList.remove('cl');$('#tt').textContent=k==='dash'?'Dashboard Mutu':k==='akses'?'Pengaturan Akses':k==='so'?'Sales Order':S.mods[k].n;k==='dash'?dash():k==='akses'?akses():k==='so'?so():mod(k)}
 const err=(e,s)=>{$(s||'#ct').innerHTML=`<div class="em"><b>😕</b>${esc(e.message)}</div>`};
 /* ---- cache, prefetch & refresh ---- */
 const ck=(k,a)=>k+'|'+(a?1:0),tp=d=>{tp.n=Math.max(0,(tp.n||0)+d);$('#tp').classList.toggle('on',tp.n>0)};
@@ -307,7 +327,7 @@ const hm=t=>new Date(t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-dig
 async function refreshAll(auto){if(RB||!S)return;RB=1;const b=$('#rf');b.classList.add('spinning');b.disabled=true;
   try{const bt=await api('boot');if(bt&&bt.L){S.L=bt.L;S.sig=bt.sig;S.perm=bt.perm||[];if(bt.user&&bt.user.sig)U.sig=bt.user.sig}}catch(x){}
   const jobs=[],add=(k,f,a)=>{if(!jobs.some(j=>j[0]===k))jobs.push([k,f,a])};
-  if(cur&&cur!=='dash'&&cur!=='akses'&&cur!=='so')add(ck(cur,T.all),'list',{m:cur,all:T.all?1:0});if(cur==='so')add('so|0','soList');
+  if(cur&&cur!=='dash'&&cur!=='akses'&&cur!=='so')add(ck(cur,T.all),'list',{m:cur,all:T.all?1:0});if(cur==='so')add('so|0','so');
   add('dash','dash');
   Object.keys(S.mods).forEach(k=>add(ck(k,0),'list',{m:k,all:0}));
   Object.keys(CA).filter(x=>x.endsWith('|1')).forEach(x=>add(x,'list',{m:x.slice(0,-2),all:1}));
@@ -332,7 +352,7 @@ async function dash(){const e=CA.dash;
 // izin dibaca dari server (sheet Akses): edit, master, del, ap_eng, ap_cli — developer selalu penuh
 const can=k=>!isG()&&!!U&&(!!U.dev||((S&&S.perm)||[]).includes(k)),canApv=()=>can('ap_eng')||can('ap_cli');
 const canW=m=>!isG()&&!m.ro&&can(m.g==='Master Data'?'master':'edit'),canD=()=>can('del');
-const hd=h=>String(h).replace(/_/g,' '),dt=v=>/^\d{4}-\d\d-\d\d/.test(v)?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4)+v.slice(10):v;
+const hd=h=>String(h).replace(/_/g,' '),dt=v=>/^\d{4}-\d\d-\d\d/.test(v)?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4)+v.slice(10):/^-?\d+\.\d{7,}$/.test(v)?String(+(+v).toFixed(4)):v;
 function mod(k){cur=k;T={q:'',p:0,all:0};const m=S.mods[k];
   $('#ct').innerHTML=`<div class="tl"><input type="search" id="q" placeholder="Cari data…">${m.al?'<label style="font-weight:600"><input type="checkbox" id="al"> Tampilkan semua unit</label>':''}${canW(m)?'<button class="btn" id="ad"><span class="e">➕</span> Tambah data</button>':''}<button class="btn xl" id="xl"><span class="e">📗</span> Excel</button><button class="btn pd" id="pd"><span class="e">📕</span> PDF</button><button class="btn pr" id="pr"><span class="e">🖨️</span> Print</button></div><div id="tb"></div>`;
   let qt;$('#q').oninput=e=>{clearTimeout(qt);const v=e.target.value.toLowerCase();qt=setTimeout(()=>{T.q=v;T.p=0;draw()},140)};if($('#al'))$('#al').onchange=e=>{T.all=e.target.checked?1:0;T.p=0;load()};if($('#ad'))$('#ad').onclick=()=>form();
@@ -525,36 +545,54 @@ function qcOpen(){let img;try{img=qrURL(QC_URL,480)}catch(x){return toast('Kode 
   document.body.append(o);o.querySelector('#qs').focus()}
 /* ---- Sales Order: grouping Kategori › Customer › Bulan › Tanggal Kirim + detail terintegrasi ---- */
 const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],SGN=['Fit-Up','Dimensional','Welding','Leak Test','Alignment','NDT','Coating'];
-const SO={q:'',op:{}},sc=v=>/^(accept|ok)/i.test(v)?'g':/^(reject|ng)/i.test(v)?'rd':v?'am':'',nf=n=>Number(n||0).toLocaleString('id-ID');
+const SO={q:'',op:{},sel:'',n:0},sc=v=>/^(accept|ok)/i.test(v)?'g':/^(reject|ng)/i.test(v)?'rd':v?'am':'',nf=n=>Number(n||0).toLocaleString('id-ID');
 const grp=(a,f)=>{const m={};a.forEach(r=>(m[f(r)]=m[f(r)]||[]).push(r));return Object.keys(m).sort().map(k=>[k,m[k]])};
-function so(){cur='so';T={};const e=CA['so|0'];
-  $('#ct').innerHTML=`<div class="tl"><input type="search" id="sq" placeholder="Cari No. SO, unit, part number, serial, customer…" value="${esc(SO.q)}"><button class="btn gh" id="sa">Buka semua</button><button class="btn gh" id="sz">Tutup semua</button></div><div id="sob"></div>`;
+function so(){cur='so';T={};SO.sel='';const e=CA['so|0'];
+  $('#ct').innerHTML=`<div class="tl"><input type="search" id="sq" placeholder="Cari No. SO, unit, part number, serial, customer…" value="${esc(SO.q)}"><button class="btn gh" id="sa">Buka semua</button><button class="btn gh" id="sz">Tutup semua</button></div><div class="sol"><div id="sob"></div><aside id="sdp" aria-label="Detail unit"></aside></div>`;
   let qt;$('#sq').oninput=ev=>{clearTimeout(qt);qt=setTimeout(()=>{SO.q=ev.target.value.toLowerCase();soDraw()},160)};
   $('#sa').onclick=()=>document.querySelectorAll('#sob details').forEach(d=>d.open=true);
   $('#sz').onclick=()=>{SO.op={};document.querySelectorAll('#sob details').forEach(d=>d.open=false)};
   const ob=$('#sob');ob.onclick=ev=>{const b=ev.target.closest('tr[data-id],button[data-id]');if(b)soOpen(b.dataset.id)};
-  ob.addEventListener('toggle',ev=>{const k=ev.target.dataset&&ev.target.dataset.k;if(k)SO.op[k]=ev.target.open},true);
+  ob.onkeydown=ev=>{if(ev.key==='Enter'&&ev.target.matches('tr[data-id]'))soOpen(ev.target.dataset.id)};
+  $('#sdp').onclick=ev=>{if(ev.target.closest('[data-x]'))return soClose();const j=ev.target.closest('[data-j]');if(j){ev.preventDefault();const id=SO.sel;soGo(j.dataset.j,id);return}if(ev.target.closest('[data-rt]')){const id=SO.sel;SO.sel='';soOpen(id)}};
+  ob.addEventListener('toggle',ev=>{const k=ev.target.dataset&&ev.target.dataset.k;if(k&&!SO.q)SO.op[k]=ev.target.open},true);
   if(e){soDraw();if(Date.now()-e.t<STALE_MS)return}else ob.innerHTML=skel();
-  getC('so|0','soList').then(()=>soDraw()).catch(x=>{if(cur!=='so')return;if(e)toast('Gagal memperbarui: '+x.message,1);else err(x,'#sob')})}
+  getC('so|0','so').then(()=>soDraw()).catch(x=>{if(cur!=='so')return;if(e)toast('Gagal memperbarui: '+x.message,1);else err(x,'#sob')})}
 function soDraw(){const e=CA['so|0'],ob=$('#sob');if(cur!=='so'||!e||!ob)return;const d=e.d,q=SO.q,A=d.rows.filter(r=>!q||r.join(' ').toLowerCase().includes(q));
   const fr=r=>d.fin[r[7]]||'',okF=A.filter(r=>/^accept/i.test(fr(r))).length,ng=A.filter(r=>(d.prog[r[7]]||[]).includes(2)).length;
-  const gh=(lv,k,lb,a,b)=>`<details class="sog l${lv}" data-k="${esc(k)}"${q||SO.op[k]?' open':''}><summary><b>${lb}</b><span>${nf(a.reduce((s,r)=>s+(+r[10]||0),0))} kg</span><em>${a.length} unit</em></summary>${b}</details>`;
-  const row=r=>{const p=d.prog[r[7]]||[],f=fr(r);return`<tr data-id="${esc(r[7])}"><td><b>${esc(r[7])}</b></td><td>${esc(r[0])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td>${esc(r[5])}</td><td>${nf(r[8])} ${esc(r[9])}</td><td>${nf(r[10])}</td><td class="sod">${SGN.map((n,i)=>`<u class="d${p[i]||0}" title="${n}"></u>`).join('')}</td><td><span class="ch ${f?sc(f):'am'}">${esc(f||'Belum')}</span></td><td class="ac"><button data-id="${esc(r[7])}" title="Detail">🔍</button></td></tr>`};
+  const gh=(lv,k,lb,a,b)=>`<details class="sog l${lv}" data-k="${esc(k)}"${q||(SO.op[k]===undefined?lv===0:SO.op[k])?' open':''}><summary><b>${lb}</b><span>${nf(a.reduce((s,r)=>s+(+r[10]||0),0))} kg</span><em>${a.length} unit</em></summary>${b}</details>`;
+  const row=r=>{const p=d.prog[r[7]]||[],f=fr(r);return`<tr data-id="${esc(r[7])}" tabindex="0"${SO.sel===String(r[7])?' class="sel"':''}><td><b>${esc(r[7])}</b></td><td>${esc(r[0])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td>${esc(r[5])}</td><td>${nf(r[8])} ${esc(r[9])}</td><td>${nf(r[10])}</td><td class="sod">${SGN.map((n,i)=>`<u class="d${p[i]||0}" title="${n}"></u>`).join('')}</td><td><span class="ch ${f?sc(f):'am'}">${esc(f||'Belum')}</span></td><td class="ac"><button data-id="${esc(r[7])}" title="Detail">🔍</button></td></tr>`};
   const tb=a=>`<div class="tw" style="max-height:none;margin:0 8px 8px"><table><thead><tr><th>Kode Serial</th><th>No. SO</th><th>Unit Number</th><th>Part Number</th><th>Kode Produk</th><th>Qty</th><th>Berat (kg)</th><th>Inspeksi</th><th>Final</th><th></th></tr></thead><tbody>${a.map(row).join('')}</tbody></table></div>`;
   const dl=t=>t==='~'?'Tanpa tanggal kirim':t.slice(8,10)+'/'+t.slice(5,7)+'/'+t.slice(0,4);
   const html=grp(A,r=>r[15]||'Tanpa kategori').map(([k,a])=>gh(0,k,'🗂️ '+esc(k),a,grp(a,r=>r[2]||'—').map(([c,b])=>gh(1,k+'|'+c,'🏢 '+esc(c),b,grp(b,r=>(r[11]||'').slice(0,7)||'~').map(([m,x])=>gh(2,k+'|'+c+'|'+m,'📅 '+(m==='~'?'Tanpa tanggal kirim':BLN[+m.slice(5)-1]+' '+m.slice(0,4)),x,grp(x,r=>(r[11]||'').slice(0,10)||'~').map(([t,y])=>gh(3,k+'|'+c+'|'+m+'|'+t,'🚚 '+dl(t),y,tb(y))).join(''))).join(''))).join(''))).join('');
-  ob.innerHTML=`<div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px"><div class="kp"><b>${A.length}</b><span>Unit Sales Order</span></div><div class="kp"><b>${okF}</b><span>Lulus final</span></div><div class="kp"><b>${ng}</b><span>Ada tahap NG</span></div></div>${html||'<div class="em"><b>🗂️</b>Tidak ada data yang cocok.</div>'}<p style="color:var(--mut);font-size:12px;margin-top:8px">Diperbarui ${esc(d.at||'')} · klik baris unit untuk melihat detail seluruh inspeksi.</p>`}
-async function soOpen(id){tp(1);try{soView(await api('soDet',{id}))}catch(x){toast(x.message,1)}finally{tp(-1)}}
+  ob.innerHTML=`<div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px"><div class="kp"><b>${A.length}</b><span>Unit Sales Order</span></div><div class="kp"><b>${okF}</b><span>Lulus final</span></div><div class="kp"><b>${ng}</b><span>Ada tahap NG</span></div></div>${html||'<div class="em"><b>🗂️</b>Tidak ada data yang cocok.</div>'}<p style="color:var(--mut);font-size:12px;margin-top:8px">Diperbarui ${esc(d.at||'')} · klik baris unit untuk membuka detail di sisi kanan.</p>`}
+const soMark=()=>document.querySelectorAll('#sob tr[data-id]').forEach(r=>r.classList.toggle('sel',r.dataset.id===SO.sel));
+function soPos(){const h=document.querySelector('.top'),b=h?Math.round(h.getBoundingClientRect().bottom):80;document.documentElement.style.setProperty('--sdt',(b+12)+'px')}
+addEventListener('resize',()=>{if(SO.sel)soPos()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&SO.sel&&!document.querySelector('.ov'))soClose()});
+function soClose(){SO.sel='';SO.n++;const w=$('.sol'),p=$('#sdp');if(w)w.classList.remove('op');if(p)p.innerHTML='';soMark()}
+const soHead=(id,r)=>`<div class="sdh"><div><b>${esc(id)}</b><small>${esc([r[2],r[3],r[4]].filter(Boolean).join(' · '))}</small></div><button type="button" class="sdx" data-x aria-label="Tutup detail" title="Tutup (Esc)">✕</button></div>`;
+async function soOpen(id){
+  if(SO.sel===id)return soClose();
+  const w=$('.sol'),p=$('#sdp');if(!w||!p)return;
+  const n=++SO.n,L=(CA['so|0']||{}).d,r=(L&&L.rows.find(x=>String(x[7])===id))||[];
+  SO.sel=id;soMark();soPos();w.classList.add('op');
+  p.innerHTML=soHead(id,r)+'<div class="sdb" id="sdb">'+'<div class="sk" style="height:20px;margin:12px 0;border-radius:8px"></div>'.repeat(9)+'</div>';p.scrollTop=0;
+  tp(1);
+  try{const d=await api('soDet',{id});if(n===SO.n)soView(d)}
+  catch(x){if(n===SO.n){const b=$('#sdb');if(b)b.innerHTML=`<div class="em" style="padding:30px 10px"><b>😕</b>${esc(x.message)}<br><button type="button" class="btn gh" data-rt style="margin-top:12px">Coba lagi</button></div>`}}
+  finally{tp(-1)}}
 function soGo(k,q){go(k);T.q=q.toLowerCase();const i=$('#q');if(i)i.value=q;if(T.d)draw()}
-function soView(d){const ap=a=>a?['E','C'].map(k=>{const v=a[k];return`<span class="ch ${v?v[0]==='Disetujui'?'g':'rd':'am'}" title="${esc(v?v[1]+' · '+v[2]:'Menunggu')}">${k==='E'?'Eng':'Client'} ${v?v[0]==='Disetujui'?'✓':'✕':'…'}</span>`}).join(' '):'',
-  cell=v=>{const x=dt(String(v==null?'':v));return/^(ok|ng|accept|reject)/i.test(x)?`<span class="ch ${sc(x)}">${esc(x)}</span>`:esc(x)},
-  tbl=(hh,r)=>`<div class="tw" style="max-height:none"><table><thead><tr>${hh.map(x=>`<th>${esc(hd(x))}</th>`).join('')}</tr></thead><tbody>${r.map(z=>`<tr>${z.map(v=>`<td>${cell(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`,
-  g=k=>(d.so.find(x=>x[0]===k)||[])[1]||'',o=document.createElement('div');o.className='ov';
-  o.innerHTML=`<div class="md" style="width:min(1000px,96vw)"><h3>🧾 ${esc(d.id)}</h3><p style="color:var(--mut)">${esc(g('Customer'))} · ${esc(g('Unit Number'))} · ${esc(g('Part Number'))}</p><div class="kvg">${d.so.filter(x=>x[1]!==''&&x[1]!=null).map(x=>`<div><small>${esc(hd(x[0]))}</small><b>${esc(dt(String(x[1])))}</b></div>`).join('')}</div>`
-  +d.st.map(s=>`<details class="sog l1" open><summary><b>${s.i} ${esc(s.n)}</b>${s.id?`<span>${esc(s.id)}</span>`:''}<span class="ch ${s.res?sc(s.res):'am'}">${esc(s.res||'Belum diinspeksi')}</span>${ap(s.ap)}<button type="button" class="btn gh" data-j="${s.k}" style="margin-left:auto;padding:5px 11px">Buka modul</button></summary>${s.h.length?tbl(s.h,s.r):'<p style="padding:0 14px 12px;color:var(--mut)">Belum ada hasil inspeksi untuk unit ini.</p>'}</details>`).join('')
-  +`<details class="sog l1" open><summary><b>🚨 NCR</b><span class="ch ${d.ncr.r.length?'rd':'g'}">${d.ncr.r.length?d.ncr.r.length+' temuan':'Tidak ada'}</span></summary>${d.ncr.r.length?tbl(d.ncr.h,d.ncr.r):''}</details><div class="fa"><button class="btn gh" id="sx2">Tutup</button></div></div>`;
-  o.onclick=e=>{if(e.target===o)return o.remove();const b=e.target.closest('[data-j]');if(b){e.preventDefault();o.remove();soGo(b.dataset.j,d.id)}};
-  document.body.append(o);o.querySelector('#sx2').onclick=()=>o.remove()}
+function soView(d){const p=$('#sdb');if(!p)return;
+  const ap=a=>a?['E','C'].map(k=>{const v=a[k];return`<span class="ch ${v?v[0]==='Disetujui'?'g':'rd':'am'}" title="${esc(v?v[1]+' · '+v[2]:'Menunggu')}">${k==='E'?'Eng':'Client'} ${v?v[0]==='Disetujui'?'✓':'✕':'…'}</span>`}).join(' '):'',
+  cell=v=>{const x=dt(String(v==null?'':v)),c=chip(x);return c?`<span class="ch ${c}">${esc(x)}</span>`:esc(x)},
+  dl=(h,r)=>`<dl class="sdl">${h.map((x,i)=>r[i]===''||r[i]==null?'':`<dt>${esc(hd(x))}</dt><dd>${cell(r[i])}</dd>`).join('')}</dl>`,
+  nc=d.ncr.r.length;
+  p.innerHTML=`<div class="sdr">${d.st.map(s=>`<span class="sdq ${s.res?sc(s.res):'nn'}" title="${esc(s.res||'Belum diinspeksi')}">${s.i} ${esc(s.n)}</span>`).join('')}</div>`
+  +`<h4 class="sdt">Data Sales Order</h4><div class="kvg">${d.so.filter(x=>x[1]!==''&&x[1]!=null).map(x=>`<div><small>${esc(hd(x[0]))}</small><b>${esc(dt(String(x[1])))}</b></div>`).join('')}</div>`
+  +`<h4 class="sdt">Hasil inspeksi</h4>`
+  +d.st.map(s=>`<details class="sog l1"${s.h.length?' open':''}><summary><b>${s.i} ${esc(s.n)}</b>${s.id?`<span>${esc(s.id)}</span>`:''}<span class="ch ${s.res?sc(s.res):'nn'}">${esc(s.res||'Belum diinspeksi')}</span>${ap(s.ap)}</summary>${s.h.length?dl(s.h,s.r[0]):'<p class="sdn">Belum ada hasil inspeksi untuk unit ini.</p>'}<div class="sdf"><button type="button" class="btn gh" data-j="${s.k}">Buka modul ${esc(s.n)}</button></div></details>`).join('')
+  +`<details class="sog l1"${nc?' open':''}><summary><b>🚨 NCR</b><span class="ch ${nc?'rd':'g'}">${nc?nc+' temuan':'Tidak ada'}</span></summary>${nc?d.ncr.r.map(r=>dl(d.ncr.h,r)).join(''):'<p class="sdn">Tidak ada NCR untuk unit ini.</p>'}</details>`}
 $('#qcb').onclick=qcOpen;
 start();
 </script></body></html>
