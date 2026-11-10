@@ -217,6 +217,11 @@ tbody tr:hover{background:rgba(255,255,255,.55)}
 .tri{width:38px;height:30px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.6);cursor:pointer;font-weight:800;color:#9aa6c3;transition:.15s}.tri:hover:not(:disabled){transform:scale(1.1)}.tri:disabled{cursor:default}
 .tri.d.on{color:#0a8f64;background:#e9fbf3}.tri.y{color:#fff;background:linear-gradient(135deg,#12b886,#0ca678);border-color:transparent}.tri.n{color:#fff;background:linear-gradient(135deg,#f03e5f,#ff6b6b);border-color:transparent}
 .akt-l{display:flex;gap:14px;flex-wrap:wrap;align-items:center;color:var(--mut);font-size:12px;margin-top:12px}.akp th{white-space:normal;min-width:96px;vertical-align:bottom}.akp td:first-child,.akp th:first-child{position:sticky;left:0;z-index:1;background:rgba(246,248,253,.94)}
+/* sales order */
+.sog{margin:8px 0;border-radius:16px;border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.4)}.sog>summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;cursor:pointer;list-style:none;font-weight:700}.sog>summary::-webkit-details-marker{display:none}
+.sog>summary:before{content:'▸';color:var(--mut);transition:transform .2s}.sog[open]>summary:before{transform:rotate(90deg)}.sog>summary span{font-size:12px;color:var(--mut);font-weight:600}.sog>summary em{font-style:normal;margin-left:auto;font-size:12px;color:var(--p);background:#eef3ff;border-radius:20px;padding:1px 10px}
+.sog.l0>summary{font-size:16px}.sog.l1,.sog.l2,.sog.l3{margin:6px 8px}.sod u{display:inline-block;width:10px;height:10px;margin-right:3px;border-radius:50%;background:#d5dcec}.sod u.d1{background:var(--g)}.sod u.d2{background:var(--r)}
+#sob tbody tr{cursor:pointer}.kvg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 14px;margin:10px 0}.kvg div{padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.55)}.kvg small{display:block;color:var(--mut);font-size:11px}
 </style></head><body>
 <!-- LOGIN -->
 <div id="lg"><span class="bl b1"></span><span class="bl b2"></span><span class="bl b3"></span><span class="bl b4"></span>
@@ -253,7 +258,7 @@ const htmlErr=(t,s)=>/accounts\.google\.com|ServiceLogin/i.test(t)?'Web App Apps
   :s===404||/unable to open|not found|tidak ditemukan/i.test(t)?'URL /exec tidak ditemukan. Salin ulang URL Web App dari Deploy > Manage deployments ke konstanta API.'
   :/^\s*</.test(t)?'Server membalas halaman HTML, bukan data. Periksa deployment Apps Script (akses "Anyone", versi terbaru) lalu coba lagi.'
   :'Balasan server tidak dikenali: '+t.slice(0,60);
-const RD=['users','boot','dash','list','accGet','sigs']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
+const RD=['users','boot','dash','list','accGet','sigs','soList','soDet']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
 async function api(fn,args,retry){
   let r,t;
   try{r=await fetch(fn==='users'?API+'?fn=users':API,fn==='users'?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,token:tok,args})});t=await r.text()}
@@ -284,25 +289,25 @@ $('#lf').onsubmit=e=>{e.preventDefault();doLogin($('#un').value,$('#pw').value)}
 async function enter(){S=await api('boot');U=S.user;$('#lg').hidden=true;$('#app').hidden=false;
   $('#cn').textContent='ERP Quality Control';$('#un2').textContent=U.name;$('#ur').textContent=U.dev?U.role+' · Developer':U.role;$('#ui').textContent=U.name[0];$('#gb').hidden=!isG();buildNav();RT=Date.now();stamp();go('dash');setTimeout(pf,900);armAuto()}
 const nv=(k,i,n,c)=>`<a data-k="${k}" style="--a:${PAL[c%PAL.length][0]};--b:${PAL[c%PAL.length][1]}"><i class="ic">${i}</i><span>${esc(n)}</span></a>`;
-function buildNav(){let h=nv('dash','📊','Dashboard',0),n=1;['Inspeksi','Mutu','Master Data','Referensi'].forEach(g=>{const ks=Object.keys(S.mods).filter(k=>S.mods[k].g===g);h+=`<div class="gp cl"><h6 tabindex="0" role="button">${g}<em>${ks.length}</em><b>▾</b></h6><div class="gi">${ks.map(k=>nv(k,S.mods[k].i,S.mods[k].n,n++)).join('')}</div></div>`});if(U.dev)h+=`<div class="gp"><h6 tabindex="0" role="button">Pengaturan<em>1</em><b>▾</b></h6><div class="gi">${nv('akses','⚙️','Pengaturan Akses',n++)}</div></div>`;$('#nv').innerHTML=h}
+function buildNav(){let h=nv('dash','📊','Dashboard',0)+nv('so','🧾','Sales Order',1),n=2;['Inspeksi','Mutu','Master Data','Referensi'].forEach(g=>{const ks=Object.keys(S.mods).filter(k=>S.mods[k].g===g);h+=`<div class="gp cl"><h6 tabindex="0" role="button">${g}<em>${ks.length}</em><b>▾</b></h6><div class="gi">${ks.map(k=>nv(k,S.mods[k].i,S.mods[k].n,n++)).join('')}</div></div>`});if(U.dev)h+=`<div class="gp"><h6 tabindex="0" role="button">Pengaturan<em>1</em><b>▾</b></h6><div class="gi">${nv('akses','⚙️','Pengaturan Akses',n++)}</div></div>`;$('#nv').innerHTML=h}
 $('#nv').onclick=e=>{const g=e.target.closest('h6');if(g){g.parentElement.classList.toggle('cl');return}const a=e.target.closest('a');if(a){go(a.dataset.k);if(isM())sbo(0)}};$('#nv').onkeydown=e=>{if(e.key==='Enter'&&e.target.matches('h6'))e.target.click()};
-function go(k){cur=k;document.querySelectorAll('#nv a').forEach(a=>a.classList.toggle('on',a.dataset.k===k));const ga=document.querySelector('#nv a.on'),gg=ga&&ga.closest('.gp');if(gg)gg.classList.remove('cl');$('#tt').textContent=k==='dash'?'Dashboard Mutu':k==='akses'?'Pengaturan Akses':S.mods[k].n;k==='dash'?dash():k==='akses'?akses():mod(k)}
+function go(k){cur=k;document.querySelectorAll('#nv a').forEach(a=>a.classList.toggle('on',a.dataset.k===k));const ga=document.querySelector('#nv a.on'),gg=ga&&ga.closest('.gp');if(gg)gg.classList.remove('cl');$('#tt').textContent=k==='dash'?'Dashboard Mutu':k==='akses'?'Pengaturan Akses':k==='so'?'Sales Order':S.mods[k].n;k==='dash'?dash():k==='akses'?akses():k==='so'?so():mod(k)}
 const err=(e,s)=>{$(s||'#ct').innerHTML=`<div class="em"><b>😕</b>${esc(e.message)}</div>`};
 /* ---- cache, prefetch & refresh ---- */
 const ck=(k,a)=>k+'|'+(a?1:0),tp=d=>{tp.n=Math.max(0,(tp.n||0)+d);$('#tp').classList.toggle('on',tp.n>0)};
 function getC(key,fn,args){if(IF[key])return IF[key];tp(1);return IF[key]=api(fn,args).then(d=>CA[key]={d,t:Date.now()}).finally(()=>{delete IF[key];tp(-1)})}
 const skel=t=>t?'<div class="kg">'+'<div class="kp sk" style="height:118px"></div>'.repeat(8)+'</div>':'<div class="tw" style="padding:12px">'+'<div class="sk" style="height:34px;margin-bottom:10px;border-radius:10px"></div>'.repeat(9)+'</div>';
-const inv=k=>{Object.keys(CA).forEach(x=>{if(x.startsWith(k+'|'))delete CA[x]});if(CA.dash)CA.dash.t=0};
+const inv=k=>{Object.keys(CA).forEach(x=>{if(x.startsWith(k+'|'))delete CA[x]});if(CA.dash)CA.dash.t=0;delete CA['so|0']};
 const redraw=()=>{const w=$('#tb .tw'),y=w?w.scrollTop:0,x=w?w.scrollLeft:0;draw();const n=$('#tb .tw');if(n){n.scrollTop=y;n.scrollLeft=x}};
 const view=()=>cur==='dash'?'dash':ck(cur,T&&T.all);
-function repaint(key){if(!S||key!==view()||!CA[key])return;if(key==='dash')paint(CA.dash.d,0);else{T.d=CA[key].d;redraw()}}
+function repaint(key){if(!S||key!==view()||!CA[key])return;if(key==='so')return soDraw();if(key==='dash')paint(CA.dash.d,0);else{T.d=CA[key].d;redraw()}}
 async function pool(jobs,on){let i=0,f=0;const w=async()=>{while(i<jobs.length){const j=jobs[i++];try{await getC(...j);on&&on(j[0])}catch(x){f++}}};await Promise.all([w(),w(),w()]);return f}
 const pf=()=>{if(S)pool(Object.keys(S.mods).filter(k=>!CA[ck(k,0)]).map(k=>[ck(k,0),'list',{m:k,all:0}]),repaint)};
 const hm=t=>new Date(t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).replace(/\./g,':'),stamp=()=>{$('#rfs').textContent='Diperbarui '+hm(RT)};
 async function refreshAll(auto){if(RB||!S)return;RB=1;const b=$('#rf');b.classList.add('spinning');b.disabled=true;
   try{const bt=await api('boot');if(bt&&bt.L){S.L=bt.L;S.sig=bt.sig;S.perm=bt.perm||[];if(bt.user&&bt.user.sig)U.sig=bt.user.sig}}catch(x){}
   const jobs=[],add=(k,f,a)=>{if(!jobs.some(j=>j[0]===k))jobs.push([k,f,a])};
-  if(cur&&cur!=='dash'&&cur!=='akses')add(ck(cur,T.all),'list',{m:cur,all:T.all?1:0});
+  if(cur&&cur!=='dash'&&cur!=='akses'&&cur!=='so')add(ck(cur,T.all),'list',{m:cur,all:T.all?1:0});if(cur==='so')add('so|0','soList');
   add('dash','dash');
   Object.keys(S.mods).forEach(k=>add(ck(k,0),'list',{m:k,all:0}));
   Object.keys(CA).filter(x=>x.endsWith('|1')).forEach(x=>add(x,'list',{m:x.slice(0,-2),all:1}));
@@ -401,10 +406,10 @@ h3{margin:11px 0 5px;font-size:9.5px;letter-spacing:.9px;text-transform:uppercas
 @media print{body{background:#fff}.pg{max-width:none;box-shadow:none}}`;
 const sgb=(i,t,n,l,j,au,at,ph,dc)=>`<div class="sg"><h5>${esc(t)}</h5>${l?`<div class="qr">${wmS(au+' · '+(n||'')+' · '+dc+' · ',i)}<img alt="QR tanda tangan" src="${qrURL(l,260,1)}"></div>`:`<div class="qr em">${esc(ph)}</div>`}<b>${esc(n||'—')}</b><small>${esc(j||'')}</small>${l?`<code>No. Auth ${esc(au)}</code>`:''}${at?`<small>${esc(at)}</small>`:''}</div>`;
 // bila tanda tangan Inspector belum ada di data sesi (mis. link baru diisi di sheet Login), ambil ulang dari server lalu tampilkan report
-function rpt(rn){const r=T.d.rows.find(x=>x[0]===rn);if(r&&!rpt.rf){const i=T.d.headers.findIndex((h,k)=>k>=(cur==='imi'?8:15)&&/^inspector/i.test(hd(h).replace(/ ?\(auto\)/i,''))),n=i<0?'':String(r[i+1]==null?'':r[i+1]).trim();
+function rpt(rn){const r=T.d.rows.find(x=>x[0]===rn);if(r&&!rpt.rf){const i=T.d.headers.findIndex((h,k)=>k>=(cur==='imi'?8:18)&&/^inspector/i.test(hd(h).replace(/ ?\(auto\)/i,''))),n=i<0?'':String(r[i+1]==null?'':r[i+1]).trim();
   if(n&&!sigBy(n)){rpt.rf=1;tp(1);return api('sigs').then(m=>{if(m)S.sig=m}).catch(()=>{}).then(()=>{tp(-1);try{rpt0(rn)}finally{rpt.rf=0}})}}rpt0(rn)}
 function rpt0(rn){try{const m=S.mods[cur],r=T.d.rows.find(x=>x[0]===rn);if(!r)return;
-  const H=T.d.headers,id=rid(r),ap=(T.d.ap||{})[id]||{},E=ap.E,C=ap.C,okE=!!E&&E[0]==='Disetujui',okC=!!C&&C[0]==='Disetujui',sp=cur==='imi'?8:15,
+  const H=T.d.headers,id=rid(r),ap=(T.d.ap||{})[id]||{},E=ap.E,C=ap.C,okE=!!E&&E[0]==='Disetujui',okC=!!C&&C[0]==='Disetujui',sp=cur==='imi'?8:18,
   cl=H.map((h,i)=>({i,h:hd(h).replace(/ ?\(auto\)/i,''),v:dt(String(r[i+1]==null?'':r[i+1]))})),
   inf=cl.filter(x=>x.i>0&&x.i<sp&&x.v!==''&&!/sisa hari/i.test(x.h)),rs=cl.filter(x=>x.i>=sp&&x.v!==''),
   vd=[...rs].reverse().find(x=>/^(status|hasil akhir)$/i.test(x.h)),
@@ -518,6 +523,38 @@ function qcOpen(){let img;try{img=qrURL(QC_URL,480)}catch(x){return toast('Kode 
   o.querySelector('#qx').onclick=off;o.querySelector('#qs').onclick=qcShare;o.querySelector('#qc').onclick=qcCopy;
   o.querySelector('#qd').onclick=()=>{const a=document.createElement('a');a.href=qrURL(QC_URL,800);a.download='QR_QC_Inspector_MSB.png';document.body.append(a);a.click();a.remove();toast('Kode QR diunduh')};
   document.body.append(o);o.querySelector('#qs').focus()}
+/* ---- Sales Order: grouping Kategori › Customer › Bulan › Tanggal Kirim + detail terintegrasi ---- */
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],SGN=['Fit-Up','Dimensional','Welding','Leak Test','Alignment','NDT','Coating'];
+const SO={q:'',op:{}},sc=v=>/^(accept|ok)/i.test(v)?'g':/^(reject|ng)/i.test(v)?'rd':v?'am':'',nf=n=>Number(n||0).toLocaleString('id-ID');
+const grp=(a,f)=>{const m={};a.forEach(r=>(m[f(r)]=m[f(r)]||[]).push(r));return Object.keys(m).sort().map(k=>[k,m[k]])};
+function so(){cur='so';T={};const e=CA['so|0'];
+  $('#ct').innerHTML=`<div class="tl"><input type="search" id="sq" placeholder="Cari No. SO, unit, part number, serial, customer…" value="${esc(SO.q)}"><button class="btn gh" id="sa">Buka semua</button><button class="btn gh" id="sz">Tutup semua</button></div><div id="sob"></div>`;
+  let qt;$('#sq').oninput=ev=>{clearTimeout(qt);qt=setTimeout(()=>{SO.q=ev.target.value.toLowerCase();soDraw()},160)};
+  $('#sa').onclick=()=>document.querySelectorAll('#sob details').forEach(d=>d.open=true);
+  $('#sz').onclick=()=>{SO.op={};document.querySelectorAll('#sob details').forEach(d=>d.open=false)};
+  const ob=$('#sob');ob.onclick=ev=>{const b=ev.target.closest('tr[data-id],button[data-id]');if(b)soOpen(b.dataset.id)};
+  ob.addEventListener('toggle',ev=>{const k=ev.target.dataset&&ev.target.dataset.k;if(k)SO.op[k]=ev.target.open},true);
+  if(e){soDraw();if(Date.now()-e.t<STALE_MS)return}else ob.innerHTML=skel();
+  getC('so|0','soList').then(()=>soDraw()).catch(x=>{if(cur!=='so')return;if(e)toast('Gagal memperbarui: '+x.message,1);else err(x,'#sob')})}
+function soDraw(){const e=CA['so|0'],ob=$('#sob');if(cur!=='so'||!e||!ob)return;const d=e.d,q=SO.q,A=d.rows.filter(r=>!q||r.join(' ').toLowerCase().includes(q));
+  const fr=r=>d.fin[r[7]]||'',okF=A.filter(r=>/^accept/i.test(fr(r))).length,ng=A.filter(r=>(d.prog[r[7]]||[]).includes(2)).length;
+  const gh=(lv,k,lb,a,b)=>`<details class="sog l${lv}" data-k="${esc(k)}"${q||SO.op[k]?' open':''}><summary><b>${lb}</b><span>${nf(a.reduce((s,r)=>s+(+r[10]||0),0))} kg</span><em>${a.length} unit</em></summary>${b}</details>`;
+  const row=r=>{const p=d.prog[r[7]]||[],f=fr(r);return`<tr data-id="${esc(r[7])}"><td><b>${esc(r[7])}</b></td><td>${esc(r[0])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td>${esc(r[5])}</td><td>${nf(r[8])} ${esc(r[9])}</td><td>${nf(r[10])}</td><td class="sod">${SGN.map((n,i)=>`<u class="d${p[i]||0}" title="${n}"></u>`).join('')}</td><td><span class="ch ${f?sc(f):'am'}">${esc(f||'Belum')}</span></td><td class="ac"><button data-id="${esc(r[7])}" title="Detail">🔍</button></td></tr>`};
+  const tb=a=>`<div class="tw" style="max-height:none;margin:0 8px 8px"><table><thead><tr><th>Kode Serial</th><th>No. SO</th><th>Unit Number</th><th>Part Number</th><th>Kode Produk</th><th>Qty</th><th>Berat (kg)</th><th>Inspeksi</th><th>Final</th><th></th></tr></thead><tbody>${a.map(row).join('')}</tbody></table></div>`;
+  const dl=t=>t==='~'?'Tanpa tanggal kirim':t.slice(8,10)+'/'+t.slice(5,7)+'/'+t.slice(0,4);
+  const html=grp(A,r=>r[15]||'Tanpa kategori').map(([k,a])=>gh(0,k,'🗂️ '+esc(k),a,grp(a,r=>r[2]||'—').map(([c,b])=>gh(1,k+'|'+c,'🏢 '+esc(c),b,grp(b,r=>(r[11]||'').slice(0,7)||'~').map(([m,x])=>gh(2,k+'|'+c+'|'+m,'📅 '+(m==='~'?'Tanpa tanggal kirim':BLN[+m.slice(5)-1]+' '+m.slice(0,4)),x,grp(x,r=>(r[11]||'').slice(0,10)||'~').map(([t,y])=>gh(3,k+'|'+c+'|'+m+'|'+t,'🚚 '+dl(t),y,tb(y))).join(''))).join(''))).join(''))).join('');
+  ob.innerHTML=`<div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px"><div class="kp"><b>${A.length}</b><span>Unit Sales Order</span></div><div class="kp"><b>${okF}</b><span>Lulus final</span></div><div class="kp"><b>${ng}</b><span>Ada tahap NG</span></div></div>${html||'<div class="em"><b>🗂️</b>Tidak ada data yang cocok.</div>'}<p style="color:var(--mut);font-size:12px;margin-top:8px">Diperbarui ${esc(d.at||'')} · klik baris unit untuk melihat detail seluruh inspeksi.</p>`}
+async function soOpen(id){tp(1);try{soView(await api('soDet',{id}))}catch(x){toast(x.message,1)}finally{tp(-1)}}
+function soGo(k,q){go(k);T.q=q.toLowerCase();const i=$('#q');if(i)i.value=q;if(T.d)draw()}
+function soView(d){const ap=a=>a?['E','C'].map(k=>{const v=a[k];return`<span class="ch ${v?v[0]==='Disetujui'?'g':'rd':'am'}" title="${esc(v?v[1]+' · '+v[2]:'Menunggu')}">${k==='E'?'Eng':'Client'} ${v?v[0]==='Disetujui'?'✓':'✕':'…'}</span>`}).join(' '):'',
+  cell=v=>{const x=dt(String(v==null?'':v));return/^(ok|ng|accept|reject)/i.test(x)?`<span class="ch ${sc(x)}">${esc(x)}</span>`:esc(x)},
+  tbl=(hh,r)=>`<div class="tw" style="max-height:none"><table><thead><tr>${hh.map(x=>`<th>${esc(hd(x))}</th>`).join('')}</tr></thead><tbody>${r.map(z=>`<tr>${z.map(v=>`<td>${cell(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`,
+  g=k=>(d.so.find(x=>x[0]===k)||[])[1]||'',o=document.createElement('div');o.className='ov';
+  o.innerHTML=`<div class="md" style="width:min(1000px,96vw)"><h3>🧾 ${esc(d.id)}</h3><p style="color:var(--mut)">${esc(g('Customer'))} · ${esc(g('Unit Number'))} · ${esc(g('Part Number'))}</p><div class="kvg">${d.so.filter(x=>x[1]!==''&&x[1]!=null).map(x=>`<div><small>${esc(hd(x[0]))}</small><b>${esc(dt(String(x[1])))}</b></div>`).join('')}</div>`
+  +d.st.map(s=>`<details class="sog l1" open><summary><b>${s.i} ${esc(s.n)}</b>${s.id?`<span>${esc(s.id)}</span>`:''}<span class="ch ${s.res?sc(s.res):'am'}">${esc(s.res||'Belum diinspeksi')}</span>${ap(s.ap)}<button type="button" class="btn gh" data-j="${s.k}" style="margin-left:auto;padding:5px 11px">Buka modul</button></summary>${s.h.length?tbl(s.h,s.r):'<p style="padding:0 14px 12px;color:var(--mut)">Belum ada hasil inspeksi untuk unit ini.</p>'}</details>`).join('')
+  +`<details class="sog l1" open><summary><b>🚨 NCR</b><span class="ch ${d.ncr.r.length?'rd':'g'}">${d.ncr.r.length?d.ncr.r.length+' temuan':'Tidak ada'}</span></summary>${d.ncr.r.length?tbl(d.ncr.h,d.ncr.r):''}</details><div class="fa"><button class="btn gh" id="sx2">Tutup</button></div></div>`;
+  o.onclick=e=>{if(e.target===o)return o.remove();const b=e.target.closest('[data-j]');if(b){e.preventDefault();o.remove();soGo(b.dataset.j,d.id)}};
+  document.body.append(o);o.querySelector('#sx2').onclick=()=>o.remove()}
 $('#qcb').onclick=qcOpen;
 start();
 </script></body></html>
