@@ -278,6 +278,22 @@ body:before,.bl{animation:none}.fl{display:none}
 html.emb .top{margin:6px 6px 0;top:6px}html.emb body:before,html.emb .bl{animation:none}html.emb .fl{display:none}
 html.emb #lg{overflow:auto}
 @media(prefers-reduced-motion:reduce){body:before{animation:none}}
+
+/* === NCR: foto base64 + klik baris untuk edit === */
+tbody tr.rc{cursor:pointer}tbody tr.rc:focus-visible{outline:2px solid var(--p);outline-offset:-2px}
+.fth{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.fph{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#eef2fb}
+.fph img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.fph small{position:absolute;left:6px;bottom:6px;padding:1px 8px;border-radius:20px;background:rgba(22,34,59,.65);color:#fff;font-size:11px;font-weight:700;pointer-events:none}
+.fph .fx{position:absolute;right:6px;top:6px;width:30px;height:30px;border:0;border-radius:50%;cursor:pointer;font-weight:800;color:#fff;background:rgba(240,62,95,.92);box-shadow:0 4px 10px rgba(22,34,59,.3)}
+.fbt{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.fbt .btn{padding:8px 13px}.fbt .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.fem,.fer{grid-column:1/-1;color:var(--mut);font-size:13px}.fer{color:var(--r);font-weight:600}.fhn{display:block;margin-top:6px;color:var(--mut);font-size:11.5px}
+form.md>.fa{position:sticky;bottom:0;margin:18px -24px -24px;padding:12px 24px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.96) 38%)}
+@media(max-width:900px){form.md>.fa{margin:18px -18px -20px;padding:12px 18px calc(12px + env(safe-area-inset-bottom))}}
+.fbx{z-index:70;place-items:center!important}.fbi{position:relative;width:min(960px,96vw);max-height:92dvh;display:grid;gap:10px;justify-items:center}
+.fbi img{max-width:100%;max-height:calc(92dvh - 70px);border-radius:16px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.fbb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;color:#fff;font-weight:700}.fbb .btn{padding:7px 13px;text-decoration:none}
+.fnv{position:absolute;top:calc(50% - 40px);width:44px;height:44px;border:0;border-radius:50%;font-size:24px;cursor:pointer;background:rgba(255,255,255,.85);box-shadow:0 6px 16px rgba(0,0,0,.3)}.fnv.p{left:6px}.fnv.n{right:6px}
 </style></head><body>
 <!-- LOGIN -->
 <div id="lg"><span class="bl b1"></span><span class="bl b2"></span><span class="bl b3"></span><span class="bl b4"></span>
@@ -317,7 +333,7 @@ const htmlErr=(t,s)=>/accounts\.google\.com|ServiceLogin/i.test(t)?'Web App Apps
   :s===404||/unable to open|not found|tidak ditemukan/i.test(t)?'URL /exec tidak ditemukan. Salin ulang URL Web App dari Deploy > Manage deployments ke konstanta API.'
   :/^\s*</.test(t)?'Server membalas halaman HTML, bukan data. Periksa deployment Apps Script (akses "Anyone", versi terbaru) lalu coba lagi.'
   :'Balasan server tidak dikenali: '+t.slice(0,60);
-const RD=['users','boot','dash','list','accGet','sigs','so','soDet']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
+const RD=['users','boot','dash','list','accGet','sigs','so','soDet','foto']; // aman diulang; save/del/approve tidak diulang agar tidak tersimpan ganda
 async function api(fn,args,retry){
   let r,t;
   try{r=await fetch(fn==='users'?API+'?fn=users':API,fn==='users'?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn,token:tok,args})});t=await r.text()}
@@ -391,7 +407,7 @@ async function dash(){const e=CA.dash;
 // izin dibaca dari server (sheet Akses): edit, master, del, ap_eng, ap_cli — developer selalu penuh
 const can=k=>!isG()&&!!U&&(!!U.dev||((S&&S.perm)||[]).includes(k)),canApv=()=>can('ap_eng')||can('ap_cli');
 const canW=m=>!isG()&&!m.ro&&can(m.g==='Master Data'?'master':'edit'),canD=()=>can('del');
-const hd=h=>String(h).replace(/_/g,' '),dt=v=>{const m=/^(\d{4})-(\d\d)-(\d\d)(?:[T ](\d\d):(\d\d))?/.exec(v);if(m&&+m[1]<1950){const n=Math.round((Date.UTC(+m[1],+m[2]-1,+m[3])-Date.UTC(1899,11,30))/864e5)+((+m[4]||0)*60+(+m[5]||0)-427)/1440;return String(+n.toFixed(2))}return dt0(v)},dt0=v=>/^\d{4}-\d\d-\d\d/.test(v)?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4)+v.slice(10):/^-?\d+\.\d{7,}$/.test(v)?String(+(+v).toFixed(4)):v;
+const hd=h=>h==='Jumlah_Foto'?'Foto':String(h).replace(/_/g,' '),dt=v=>{const m=/^(\d{4})-(\d\d)-(\d\d)(?:[T ](\d\d):(\d\d))?/.exec(v);if(m&&+m[1]<1950){const n=Math.round((Date.UTC(+m[1],+m[2]-1,+m[3])-Date.UTC(1899,11,30))/864e5)+((+m[4]||0)*60+(+m[5]||0)-427)/1440;return String(+n.toFixed(2))}return dt0(v)},dt0=v=>/^\d{4}-\d\d-\d\d/.test(v)?v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4)+v.slice(10):/^-?\d+\.\d{7,}$/.test(v)?String(+(+v).toFixed(4)):v;
 function mod(k){cur=k;T={q:'',p:0,all:0};const m=S.mods[k];
   $('#ct').innerHTML=`<div class="tl"><input type="search" id="q" placeholder="Cari data…">${m.al?'<label style="font-weight:600"><input type="checkbox" id="al"> Tampilkan semua unit</label>':''}${canW(m)&&k!=='imi'?'<button class="btn" id="ad"><span class="e">➕</span> Tambah data</button>':''}<button class="btn xl" id="xl"><span class="e">📗</span> Excel</button><button class="btn pd" id="pd"><span class="e">📕</span> PDF</button><button class="btn pr" id="pr"><span class="e">🖨️</span> Print</button></div><div id="tb"></div>`;
   let qt;$('#q').oninput=e=>{clearTimeout(qt);const v=e.target.value.toLowerCase();qt=setTimeout(()=>{T.q=v;T.p=0;draw()},140)};if($('#al'))$('#al').onchange=e=>{T.all=e.target.checked?1:0;T.p=0;load()};if($('#ad'))$('#ad').onclick=()=>form();
@@ -403,11 +419,13 @@ async function load(){const k=cur,al=T.all,key=ck(k,al),e=CA[key],tk=T,ok=()=>cu
 const vis=()=>{const h=S.mods[cur].hd.split(',');return T.d.headers.map((x,i)=>i).filter(i=>!h.includes(ltr(i)))};
 const flt=()=>{const v=vis(),q=T.q;return q?T.d.rows.filter(r=>v.some(i=>String(r[i+1]).toLowerCase().includes(q))):T.d.rows};
 function chip(v){const s=String(v);if(/^(ok|accept|accepted|closed|valid|aktif|lulus|efektif|completed|disetujui)$/i.test(s))return'g';if(/^(ng|reject|rejected|open|overdue|expired|bocor|rembes|tetes|non-aktif|ditolak|critical|cancelled)$/i.test(s))return'rd';if(/^(conditional accept|pending|rework|akan jatuh tempo|major|on hold|minor)$/i.test(s))return'am';if(/^(ongoing|baru)$/i.test(s))return'bl2';return''}
+// modul yang barisnya bisa diklik langsung untuk edit (tanpa menekan tombol ✏️); pengguna tanpa izin edit melihat detail saja
+const ROWEDIT=['ncr'],rowOpen=rn=>{const m=S.mods[cur];form(rn,!canW(m))};
 function draw(){const m=S.mods[cur],v=vis(),rows=flt(),n=30,pages=Math.max(1,Math.ceil(rows.length/n));T.p=Math.min(T.p,pages-1);
-  const pg=rows.slice(T.p*n,T.p*n+n),w=canW(m),ap=apOn(m),rp=m.g==='Inspeksi',av=ap&&canApv(),ac=w||rp||av;
-  $('#tb').innerHTML=rows.length?`<div class="tw cd"><table><thead><tr>${v.map(i=>`<th>${esc(hd(T.d.headers[i]))}</th>`).join('')}${ap?'<th>Approval</th>':''}${ac?'<th></th>':''}</tr></thead><tbody>${pg.map(r=>`<tr>${v.map(i=>{const x=dt(String(r[i+1]));const c=chip(x);return`<td data-l="${esc(hd(T.d.headers[i]))}"${x===''?' class="z"':''} title="${esc(x)}">${c?`<span class="ch ${c}">${esc(x)}</span>`:esc(x)}</td>`}).join('')}${ap?`<td data-l="Approval">${apc(r)}</td>`:''}${ac?`<td class="ac">${rp?`<button data-r="${r[0]}" title="Report inspeksi">📄</button>`:''}${av?`<button data-a="${r[0]}" title="Approval &amp; QR tanda tangan">✅</button>`:''}${w?`<button data-e="${r[0]}" title="Ubah">✏️</button>${canD()?`<button data-d="${r[0]}" title="Hapus">🗑️</button>`:''}`:''}</td>`:''}</tr>`).join('')}</tbody></table></div><div class="pg"><span>${rows.length} data · halaman ${T.p+1}/${pages}</span><span><button class="btn gh" data-pg="-1">‹</button> <button class="btn gh" data-pg="1">›</button></span></div>`
+  const pg=rows.slice(T.p*n,T.p*n+n),w=canW(m),ap=apOn(m),rp=m.g==='Inspeksi',av=ap&&canApv(),ac=w||rp||av,rc=ROWEDIT.includes(cur);
+  $('#tb').innerHTML=rows.length?`<div class="tw cd"><table><thead><tr>${v.map(i=>`<th>${esc(hd(T.d.headers[i]))}</th>`).join('')}${ap?'<th>Approval</th>':''}${ac?'<th></th>':''}</tr></thead><tbody>${pg.map(r=>`<tr${rc?` class="rc" data-rn="${r[0]}" tabindex="0" title="Klik untuk ${w?'mengubah':'melihat'} data"`:''}>${v.map(i=>{const x=dt(String(r[i+1]));const c=chip(x),fc=T.d.headers[i]==='Jumlah_Foto';return`<td data-l="${esc(hd(T.d.headers[i]))}"${x===''?' class="z"':''} title="${esc(x)}">${fc?(+x?`<span class="ch bl2">📷 ${esc(x)}</span>`:''):c?`<span class="ch ${c}">${esc(x)}</span>`:esc(x)}</td>`}).join('')}${ap?`<td data-l="Approval">${apc(r)}</td>`:''}${ac?`<td class="ac">${rp?`<button data-r="${r[0]}" title="Report inspeksi">📄</button>`:''}${av?`<button data-a="${r[0]}" title="Approval &amp; QR tanda tangan">✅</button>`:''}${w?`<button data-e="${r[0]}" title="Ubah">✏️</button>${canD()?`<button data-d="${r[0]}" title="Hapus">🗑️</button>`:''}`:''}</td>`:''}</tr>`).join('')}</tbody></table></div><div class="pg"><span>${rows.length} data · halaman ${T.p+1}/${pages}${rc?` · klik baris untuk ${w?'mengubah':'melihat detail'}`:''}</span><span><button class="btn gh" data-pg="-1">‹</button> <button class="btn gh" data-pg="1">›</button></span></div>`
   :`<div class="em"><b>🗂️</b>${m.al&&!T.all?'Belum ada hasil inspeksi. Klik “Tambah data” atau tampilkan semua unit.':'Tidak ada data yang cocok.'}</div>`;
-  $('#tb').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.pg){T.p=Math.max(0,Math.min(pages-1,T.p+ +b.dataset.pg));draw()}else if(b.dataset.e)form(+b.dataset.e);else if(b.dataset.d)confirmDel(+b.dataset.d);else if(b.dataset.a)appr(+b.dataset.a);else if(b.dataset.r)rpt(+b.dataset.r)}}
+  $('#tb').onclick=e=>{const b=e.target.closest('button');if(!b){const tr=rc&&e.target.closest('tr[data-rn]');if(tr&&!String(getSelection()).length)rowOpen(+tr.dataset.rn);return}if(b.dataset.pg){T.p=Math.max(0,Math.min(pages-1,T.p+ +b.dataset.pg));draw()}else if(b.dataset.e)form(+b.dataset.e);else if(b.dataset.d)confirmDel(+b.dataset.d);else if(b.dataset.a)appr(+b.dataset.a);else if(b.dataset.r)rpt(+b.dataset.r)};$('#tb').onkeydown=e=>{if(e.key==='Enter'&&rc&&e.target.matches('tr[data-rn]'))rowOpen(+e.target.dataset.rn)}}
 /* ---- approval & barcode (QC Manager) ---- */
 const apOn=m=>m.g==='Inspeksi'||m.g==='Mutu',rid=r=>{const m=S.mods[cur];return m.al?r[col(m.k)+1]:r[1]};
 const LVN={E:'Quality Control Engineer',C:'Quality Control Client'},nowJ=()=>new Date().toLocaleString('sv-SE',{timeZone:'Asia/Jakarta'}).slice(0,16);
@@ -498,16 +516,48 @@ function fld(f,v,ed){const n=`name="${f.c}"`,lb=`<label>${esc(hd(f.h))}</label>`
   if(f.t==='l')return`<div class="fg">${lb}<select ${n}>${opts(f.l,v)}</select></div>`;
   if(f.t==='x')return`<div class="fg full">${lb}<textarea ${n} rows="2">${esc(v)}</textarea></div>`;
   const ty={d:'date',dt:'datetime-local',n:'number'}[f.t]||'text';return`<div class="fg">${lb}<input ${n} type="${ty}"${ty==='number'?' step="any"':''} value="${esc(String(v).replace(' ','T'))}"${dis}></div>`}
-function form(rn){const m=S.mods[cur],r=rn?T.d.rows.find(x=>x[0]===rn):null;let h='';
+/* ---- foto (base64 sekecil mungkin; 1 foto = 1 sel Google Sheets, batas 50.000 karakter) ---- */
+const FOTO={ch:34000,try:[[1024,.72],[1024,.6],[900,.6],[900,.5],[780,.55],[780,.45],[660,.5],[660,.4],[560,.45],[480,.42],[400,.4],[320,.36]]},
+fsrc=b=>/^data:/.test(b)?b:'data:image/jpeg;base64,'+b,kb=b=>Math.max(1,Math.round(String(b).length*.75/1024))+' KB';
+// kecilkan foto (maks 1024px, JPEG) bertahap sampai teks base64 <= FOTO.ch karakter; hasil base64 murni tanpa awalan data:
+function fotoMini(f){return new Promise((ok,no)=>{if(!/^image\//.test(f.type))return no(new Error('Berkas "'+f.name+'" bukan gambar.'));
+  const u=URL.createObjectURL(f),im=new Image();im.onerror=()=>{URL.revokeObjectURL(u);no(new Error('Gambar tidak dapat dibaca.'))};
+  im.onload=()=>{URL.revokeObjectURL(u);try{const W=im.naturalWidth,H=im.naturalHeight;if(!W||!H)throw 0;let best='',lw=0,cv,cx;
+    for(const[mx,q]of FOTO.try){const s=Math.min(1,mx/Math.max(W,H)),w=Math.max(1,Math.round(W*s)),h=Math.max(1,Math.round(H*s));
+      if(w!==lw){cv=document.createElement('canvas');cv.width=w;cv.height=h;cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.imageSmoothingQuality='high';cx.drawImage(im,0,0,w,h);lw=w}
+      best=cv.toDataURL('image/jpeg',q).slice(23);if(best.length<=FOTO.ch)return ok(best)}
+    ok(best)}catch(e){no(new Error('Gagal memproses gambar.'))}};im.src=u})}
+function fotoView(a,i){const o=document.createElement('div');o.className='ov fbx';let k=i;
+  const sh=()=>{o.innerHTML=`<div class="fbi"><img src="${fsrc(a[k])}" alt="Foto ${k+1}"><div class="fbb"><span>${k+1} / ${a.length}</span><a class="btn gh" download="Foto_${k+1}.jpg" href="${fsrc(a[k])}">⬇️ Unduh</a><button type="button" class="btn gh" data-x>Tutup</button></div>${a.length>1?'<button type="button" class="fnv p" data-n="-1" aria-label="Sebelumnya">‹</button><button type="button" class="fnv n" data-n="1" aria-label="Berikutnya">›</button>':''}</div>`},
+  off=()=>{o.remove();document.removeEventListener('keydown',kd,true)},kd=e=>{if(e.key==='Escape'){e.stopPropagation();off()}else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){k=(k+(e.key==='ArrowLeft'?-1:1)+a.length)%a.length;sh()}};
+  o.onclick=e=>{if(e.target===o||e.target.closest('[data-x]'))return off();const n=e.target.closest('[data-n]');if(n){k=(k+ +n.dataset.n+a.length)%a.length;sh()}};
+  sh();document.body.append(o);document.addEventListener('keydown',kd,true)}
+/* ---- form ---- */
+function form(rn,ro){const m=S.mods[cur],r=rn?T.d.rows.find(x=>x[0]===rn):null,mx=m.ph||0,FT={a:[],dirty:0,ready:!r,busy:0,err:''};let h='';
   if(m.al)h+=`<div class="fg full"><label>Unit produksi</label>${r?`<input value="${esc(r[col(m.k)+1])}" disabled>`:`<input name="_unit" list="ul" autocomplete="off" inputmode="search" placeholder="Ketik kode serial / customer…" required><datalist id="ul">${(S.L.unit||[]).map(x=>`<option value="${esc(x[0])}">${esc(x[1])}</option>`).join('')}</datalist>`}</div>`;
   h+=m.f.map(f=>fld(f,r?r[col(f.c)+1]:'',!!r)).join('');
-  const o=document.createElement('div');o.className='ov';o.innerHTML=`<form class="md"><h3>${r?'Ubah':'Tambah'} ${esc(m.n)}</h3><div class="fm">${h}</div><div class="fa"><button type="button" class="btn gh" id="cx">Batal</button><button class="btn">Simpan data</button></div></form>`;document.body.append(o);
+  if(mx)h+=`<div class="fg full"><label>Foto temuan <span id="fc"></span></label><div class="fth" id="fth"></div>${ro?'':`<div class="fbt"><button type="button" class="btn gh" id="fcam"><span class="e">📷</span> Ambil foto</button><button type="button" class="btn gh" id="fgal"><span class="e">🖼️</span> Pilih dari galeri</button></div><input type="file" id="fi1" accept="image/*" capture="environment" hidden><input type="file" id="fi2" accept="image/*" multiple hidden><small class="fhn">Maksimal ${mx} foto. Foto otomatis dikecilkan dan disimpan sebagai teks base64 di Google Sheet.</small>`}</div>`;
+  const o=document.createElement('div');o.className='ov';o.innerHTML=`<form class="md"><h3>${ro?'Detail':r?'Ubah':'Tambah'} ${esc(m.n)}</h3><div class="fm">${h}</div><div class="fa">${ro?'<button type="button" class="btn gh" id="cx">Tutup</button>':'<button type="button" class="btn gh" id="cx">Batal</button><button class="btn">Simpan data</button>'}</div></form>`;document.body.append(o);
   o.onclick=e=>{if(e.target===o)o.remove()};o.querySelector('#cx').onclick=()=>o.remove();
-  const jd=o.querySelector('[name=J]');if(cur==='ncr'&&jd)jd.onchange=()=>{const d=S.L.def.find(x=>x[0]===jd.value),l=o.querySelector('[name=L]');if(d&&l&&d[2])l.value=d[2]};
-  o.querySelector('form').onsubmit=async e=>{e.preventDefault();const data={};let id=r?(m.al?r[col(m.k)+1]:r[1]):null;
+  if(ro)o.querySelectorAll('.fm input,.fm select,.fm textarea').forEach(x=>x.disabled=true);
+  const jd=o.querySelector('[name=J]');if(cur==='ncr'&&jd&&!ro)jd.onchange=()=>{const d=S.L.def.find(x=>x[0]===jd.value),l=o.querySelector('[name=L]');if(d&&l&&d[2])l.value=d[2]};
+  if(mx){const fd=()=>{const t=o.querySelector('#fth');if(!t)return;o.querySelector('#fc').textContent=FT.ready?`(${FT.a.length}/${mx})`:'';
+      t.innerHTML=FT.err?`<p class="fer">${esc(FT.err)} <button type="button" class="btn gh" data-fr>Coba lagi</button></p>`:!FT.ready?'<div class="fph sk"></div>'
+        :FT.a.map((b,i)=>`<div class="fph"><img src="${fsrc(b)}" alt="Foto ${i+1}" data-fz="${i}"><small>${kb(b)}</small>${ro?'':`<button type="button" class="fx" data-fd="${i}" aria-label="Hapus foto ${i+1}">✕</button>`}</div>`).join('')+(FT.busy?'<div class="fph sk"></div>':'')+(FT.a.length||FT.busy?'':'<p class="fem">Belum ada foto.</p>');
+      o.querySelectorAll('#fcam,#fgal').forEach(b=>b.disabled=!FT.ready||FT.busy>0||FT.a.length>=mx)},
+    ld=()=>{FT.err='';const ci=T.d.headers.indexOf('Jumlah_Foto');if(!r||ci<0||!(+r[ci+1]>0)){FT.ready=1;return fd()}FT.ready=0;fd();
+      api('foto',{m:cur,id:r[1]}).then(d=>{FT.a=d.fotos||[];FT.ready=1}).catch(x=>{FT.err='Foto gagal dimuat: '+x.message}).finally(()=>{if(o.isConnected)fd()})},
+    add=async fl=>{fl=[...fl];if(!fl.length)return;const room=mx-FT.a.length;if(fl.length>room)toast('Maksimal '+mx+' foto per data.',1);
+      for(const f of fl.slice(0,Math.max(0,room))){FT.busy++;fd();try{FT.a.push(await fotoMini(f));FT.dirty=1}catch(x){toast(x.message,1)}FT.busy--;fd()}};
+    o.querySelector('#fth').onclick=e=>{const z=e.target.closest('[data-fz]'),d=e.target.closest('[data-fd]');if(z)fotoView(FT.a,+z.dataset.fz);else if(d&&!ro){FT.a.splice(+d.dataset.fd,1);FT.dirty=1;fd()}else if(e.target.closest('[data-fr]'))ld()};
+    if(!ro){o.querySelector('#fcam').onclick=()=>o.querySelector('#fi1').click();o.querySelector('#fgal').onclick=()=>o.querySelector('#fi2').click();o.querySelectorAll('#fi1,#fi2').forEach(i=>i.onchange=e=>{add(e.target.files);e.target.value=''})}
+    ld()}
+  o.querySelector('form').onsubmit=async e=>{e.preventDefault();if(ro)return;const data={};let id=r?(m.al?r[col(m.k)+1]:r[1]):null;
     [...e.target.elements].forEach(x=>{if(!x.name||x.disabled)return;if(x.name==='_unit')id=x.value.trim();else data[x.name]=x.value});
     if(m.al&&!r&&!(S.L.unit||[]).some(u=>u[0]===id))return toast('Kode serial tidak ditemukan. Pilih dari daftar saran.',1);
-    busy('Menyimpan data');try{await api('save',{m:cur,id,data});inv(cur);o.remove();toast('Data tersimpan');await load()}catch(x){idle();toast(x.message,1)}idle()}}
+    if(FT.busy)return toast('Tunggu foto selesai diproses.',1);if(mx&&!FT.ready)return toast('Foto masih dimuat, tunggu sebentar.',1);
+    const pl={m:cur,id,data};if(mx&&FT.dirty)pl.fotos=FT.a;
+    busy('Menyimpan data');try{await api('save',pl);inv(cur);o.remove();toast('Data tersimpan');await load()}catch(x){idle();toast(x.message,1)}idle()}}
 function confirmDel(rn){const r=T.d.rows.find(x=>x[0]===rn),m=S.mods[cur],id=m.al?r[col(m.k)+1]:r[1],o=document.createElement('div');o.className='ov';
   o.innerHTML=`<div class="md" style="width:380px;text-align:center"><div style="font-size:46px">🗑️</div><h3>Hapus data ${esc(id)}?</h3><p style="color:var(--mut)">Isian pada baris ini akan dikosongkan.</p><div class="fa" style="justify-content:center"><button class="btn gh" id="n">Batal</button><button class="btn pd" id="y">Ya, hapus</button></div></div>`;document.body.append(o);
   o.querySelector('#n').onclick=()=>o.remove();o.querySelector('#y').onclick=async()=>{o.remove();busy('Menghapus data');try{await api('del',{m:cur,id});inv(cur);toast('Data dihapus');await load()}catch(x){toast(x.message,1)}idle()}}
